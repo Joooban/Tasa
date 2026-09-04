@@ -1,0 +1,71 @@
+name: tasa
+description: "Tasa — a coffee-life tracker for the Philippines."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_riverpod: ^2.6.1
+  sqflite: ^2.4.1
+  path: ^1.9.0
+  path_provider: ^2.1.5
+  image_picker: ^1.1.2
+  flutter_image_compress: ^2.3.0
+  share_plus: 13.0.0
+  file_picker: ^12.2.0
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.9.4
+  package_info_plus: ^10.2.1
+  intl: ^0.19.0
+  uuid: ^4.5.1
+  google_fonts: ^6.2.1
+  url_launcher: ^6.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.4.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icon_mark.png
+    - assets/icon_mark_dark.png
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon_mark_flat.png"
+  adaptive_icon_background: "#EDE6D8"
+  adaptive_icon_foreground: "assets/icon_mark.png"
+  min_sdk_android: 21
+
+flutter_native_splash:
+  color: "#EDE6D8"
+  image: assets/icon_mark.png
+  branding: assets/branding.png
+  branding_mode: bottom
+  branding_bottom_padding: 32
+  color_dark: "#1D1712"
+  image_dark: assets/icon_mark_dark.png
+  branding_dark: assets/branding_dark.png
+  # Android 12+'s own SplashScreen API only allows a small centered icon —
+  # no room for a wordmark there, which is why the mark alone showed up
+  # before. `branding`/`branding_dark` above is the platform-supported slot
+  # for the wordmark + tagline, rendered just above the nav bar.
+  android_12:
+    image: assets/icon_mark.png
+    icon_background_color: "#EDE6D8"
+    image_dark: assets/icon_mark_dark.png
+    icon_background_color_dark: "#1D1712"
+    branding: assets/branding.png
+    branding_dark: assets/branding_dark.png
+  android: true
+  ios: false

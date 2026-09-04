@@ -1,0 +1,1415 @@
+<title>Tasa</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --bg:#EDE6D8;
+    --surface:#FBF7EF;
+    --surface-2:#F3EBDC;
+    --ink:#2B1D14;
+    --ink-soft:#7A6A5B;
+    --ink-faint:#A79683;
+    --line:#DDD1BA;
+    --amber:#C98A3A;
+    --amber-ink:#7A4E1D;
+    --sage:#6E7F5C;
+    --sage-ink:#3F4A32;
+    --clay:#9C5A42;
+    --clay-ink:#5C3325;
+    --danger:#A6402F;
+    --shadow: 0 1px 2px rgba(43,29,20,0.06), 0 8px 24px -12px rgba(43,29,20,0.18);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1D1712;
+      --surface:#271F18;
+      --surface-2:#2E251C;
+      --ink:#F1E8DC;
+      --ink-soft:#B8A996;
+      --ink-faint:#82725F;
+      --line:#3B2F24;
+      --amber:#E0A24E;
+      --amber-ink:#F6D9A6;
+      --sage:#93A87B;
+      --sage-ink:#C7D6B4;
+      --clay:#C9805F;
+      --clay-ink:#EAC0AC;
+      --danger:#D9705C;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1D1712;
+    --surface:#271F18;
+    --surface-2:#2E251C;
+    --ink:#F1E8DC;
+    --ink-soft:#B8A996;
+    --ink-faint:#82725F;
+    --line:#3B2F24;
+    --amber:#E0A24E;
+    --amber-ink:#F6D9A6;
+    --sage:#93A87B;
+    --sage-ink:#C7D6B4;
+    --clay:#C9805F;
+    --clay-ink:#EAC0AC;
+    --danger:#D9705C;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Karla',-apple-system,BlinkMacSystemFont,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',Georgia,serif;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .mono{ font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+  a{color:inherit;}
+  button{ font-family:inherit; }
+  ::selection{ background:var(--amber); color:#1D1712; }
+  :focus-visible{ outline:2px solid var(--amber); outline-offset:2px; border-radius:4px; }
+
+  .app{ max-width:840px; margin:0 auto; padding:0 16px 118px; }
+
+  /* ---------- Header / Nav ---------- */
+  .topbar{
+    padding:22px 0 14px; display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+  }
+  .brand{ display:flex; align-items:baseline; gap:10px; }
+  .brand .mark{ font-family:'Fraunces',serif; font-weight:700; font-size:26px; }
+  .brand .tag{ color:var(--ink-soft); font-size:13px; }
+  .streakpill{
+    display:flex; align-items:center; gap:6px; font-size:13px; color:var(--amber-ink);
+    background:var(--surface-2); border:1px solid var(--line); padding:5px 10px 5px 8px; border-radius:999px;
+  }
+  .bottomnav{
+    position:fixed; left:0; right:0; bottom:0; z-index:60;
+    display:flex; justify-content:center; padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    pointer-events:none;
+  }
+  .bottomnav-inner{
+    pointer-events:auto; display:flex; align-items:center; gap:2px;
+    background:color-mix(in srgb, var(--surface) 90%, transparent);
+    backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    border:1px solid var(--line); border-radius:24px; padding:6px; box-shadow:var(--shadow);
+    max-width:420px; width:100%;
+  }
+  .navitem{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:none; border:none; padding:8px 4px 7px; border-radius:16px; cursor:pointer; color:var(--ink-faint);
+    transition:transform .12s ease, color .12s ease, background .12s ease;
+  }
+  .navitem svg{ width:21px; height:21px; display:block; }
+  .navitem span{ font-size:10px; font-weight:700; letter-spacing:0.01em; }
+  .navitem.active{ color:var(--amber-ink); background:color-mix(in srgb, var(--amber) 16%, transparent); }
+  .navitem:active{ transform:scale(0.94); }
+  .navfab{
+    flex:none; width:50px; height:50px; border-radius:50%; margin:0 4px; display:flex; align-items:center; justify-content:center;
+    background:var(--amber); color:#241505; border:none; cursor:pointer;
+    box-shadow:0 8px 18px -6px rgba(201,138,58,0.6);
+    transform:translateY(-13px); transition:transform .12s ease;
+  }
+  .navfab svg{ width:23px; height:23px; }
+  .navfab:active{ transform:translateY(-13px) scale(0.92); }
+
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  /* ---------- Wall ---------- */
+  .wall-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; flex-wrap:wrap;}
+  .filters{ display:flex; gap:6px; }
+  .chip{
+    background:var(--surface); border:1px solid var(--line); color:var(--ink-soft); font-size:13px;
+    padding:6px 12px; border-radius:999px; cursor:pointer; font-weight:600;
+  }
+  .chip.active{ background:var(--ink); color:var(--bg); border-color:var(--ink); }
+  .actions{ display:flex; gap:8px; }
+  .btn{
+    display:inline-flex; align-items:center; gap:6px; font-size:13.5px; font-weight:700; cursor:pointer;
+    border-radius:10px; padding:9px 14px; border:1px solid transparent; white-space:nowrap;
+  }
+  .btn{ transition:transform .1s ease, filter .12s ease, background .12s ease; }
+  .btn:active{ transform:scale(0.96); }
+  .btn-primary{ background:var(--amber); color:#241505; }
+  .btn-primary:hover{ filter:brightness(1.05); }
+  .btn-ghost{ background:var(--surface); color:var(--ink); border-color:var(--line); }
+  .btn-ghost:hover{ background:var(--surface-2); }
+  .btn-quiet{ background:none; color:var(--ink-soft); border-color:var(--line); }
+  .btn-danger{ background:none; color:var(--danger); border-color:var(--line); }
+  .btn-sm{ padding:6px 10px; font-size:12.5px; border-radius:8px; }
+  .streakpill{ cursor:pointer; transition:transform .1s ease; border:1px solid var(--line); }
+  .streakpill:active{ transform:scale(0.96); }
+  .streakpill svg{ width:14px; height:14px; }
+
+  .feed{ display:flex; flex-direction:column; gap:10px; }
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px;
+    box-shadow:var(--shadow); position:relative; cursor:pointer;
+  }
+  .card.skip{ background:transparent; box-shadow:none; border-style:dashed; padding:10px 14px; }
+  .card:hover{ border-color:var(--ink-faint); }
+  .card-row{ display:flex; gap:12px; }
+  .card-photo{
+    width:64px; height:64px; border-radius:10px; object-fit:cover; flex:none; background:var(--surface-2);
+  }
+  .card-main{ flex:1; min-width:0; }
+  .card-top{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;}
+  .badge-tag{
+    font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;
+    padding:2px 7px; border-radius:6px;
+  }
+  .tag-home{ background:color-mix(in srgb, var(--sage) 18%, transparent); color:var(--sage-ink); }
+  .tag-away{ background:color-mix(in srgb, var(--clay) 18%, transparent); color:var(--clay-ink); }
+  .sample-tag{ font-size:10.5px; font-weight:700; color:var(--ink-faint); border:1px solid var(--line); padding:2px 7px; border-radius:6px; }
+  .card-title{ font-weight:700; font-size:15px; }
+  .card-sub{ font-size:12.5px; color:var(--ink-soft); }
+  .card-caption{ font-size:14.5px; margin-top:4px; font-style:italic; color:var(--ink); }
+  .card-meta{ display:flex; align-items:center; gap:10px; margin-top:6px; flex-wrap:wrap; }
+  .price{ font-weight:700; }
+  .beans{ display:inline-flex; gap:2px; }
+  .bean{ width:13px; height:13px; }
+  .empty{
+    text-align:center; padding:48px 16px; color:var(--ink-soft); border:1px dashed var(--line); border-radius:14px;
+  }
+
+  /* ---------- Wrapped ---------- */
+  .wrapped-card{
+    background:linear-gradient(165deg, var(--espresso, #3C2A1E) 0%, #241609 100%);
+    color:#F3E7D6; border-radius:22px; padding:30px 26px; max-width:380px; margin:0 auto 18px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  .wrapped-card::before{
+    content:""; position:absolute; inset:0; opacity:0.5; pointer-events:none;
+    background: radial-gradient(circle at 85% -10%, rgba(224,162,78,0.35), transparent 55%);
+  }
+  .wrapped-eyebrow{ font-size:12px; text-transform:uppercase; letter-spacing:0.14em; opacity:0.75; }
+  .wrapped-hero{ font-family:'Fraunces',serif; font-weight:600; font-size:44px; margin:6px 0 2px; line-height:1.05; }
+  .wrapped-joke{ font-size:13.5px; opacity:0.8; margin-bottom:18px; }
+  .wrapped-row{ display:flex; justify-content:space-between; align-items:baseline; padding:9px 0; border-top:1px solid rgba(255,255,255,0.14); font-size:14px; }
+  .wrapped-row .k{ opacity:0.7; }
+  .wrapped-row .v{ font-weight:700; font-family:'IBM Plex Mono',monospace; }
+  .wrapped-badges{ margin-top:16px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.14); }
+  .wrapped-badges .label{ font-size:12px; text-transform:uppercase; letter-spacing:0.1em; opacity:0.7; margin-bottom:8px; }
+  .wrapped-badge-pill{ display:inline-flex; align-items:center; gap:5px; background:rgba(255,255,255,0.12); padding:5px 10px; border-radius:999px; font-size:12.5px; margin:0 6px 6px 0;}
+  .wrapped-controls{ display:flex; justify-content:center; gap:10px; align-items:center; margin-bottom:24px; flex-wrap:wrap;}
+  .hide-toggle{ display:flex; align-items:center; gap:6px; font-size:13px; color:var(--ink-soft); }
+
+  /* ---------- Badges shelf ---------- */
+  .badge-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
+  .badge-cell{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px; text-align:center;
+  }
+  .badge-cell.locked{ opacity:0.55; }
+  .badge-cell .bicon{ width:30px; height:30px; margin:0 auto 8px; }
+  .badge-cell .bname{ font-weight:700; font-size:13.5px; margin-bottom:3px; }
+  .badge-cell .bdesc{ font-size:11.5px; color:var(--ink-soft); }
+  .bprogress{ margin-top:8px; height:5px; border-radius:3px; background:var(--surface-2); overflow:hidden; }
+  .bprogress > div{ height:100%; background:var(--amber); }
+  .section-title{ font-size:13px; text-transform:uppercase; letter-spacing:0.1em; color:var(--ink-soft); margin:22px 0 10px; }
+
+  /* ---------- Settings ---------- */
+  .panel{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:18px; margin-bottom:14px; }
+  .panel h3{ margin:0 0 4px; font-size:16px; }
+  .panel p.desc{ margin:0 0 12px; font-size:13px; color:var(--ink-soft); max-width:52ch; }
+  .field-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .field{ display:flex; flex-direction:column; gap:5px; flex:1; min-width:140px; }
+  .field label{ font-size:12px; color:var(--ink-soft); font-weight:600; }
+  input, select, textarea{
+    background:var(--surface-2); border:1px solid var(--line); border-radius:9px; padding:9px 10px;
+    font-family:inherit; font-size:14px; color:var(--ink); width:100%;
+  }
+  textarea{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; resize:vertical; }
+  .switch-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:4px 0; }
+  .switch-row .txt{ font-size:13.5px; }
+  .switch-row .sub{ font-size:12px; color:var(--ink-soft); }
+  .switch{ position:relative; width:38px; height:22px; flex:none; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{ position:absolute; inset:0; background:var(--line); border-radius:999px; cursor:pointer; transition:0.15s;}
+  .slider::before{ content:""; position:absolute; width:16px; height:16px; left:3px; top:3px; background:var(--surface); border-radius:50%; transition:0.15s;}
+  input:checked + .slider{ background:var(--sage); }
+  input:checked + .slider::before{ transform:translateX(16px); }
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(30,20,12,0.45); display:none; align-items:flex-end;
+    justify-content:center; z-index:50; padding:0;
+  }
+  .overlay.open{ display:flex; }
+  @media (min-width:600px){ .overlay{ align-items:center; padding:20px; } }
+  .modal{
+    background:var(--bg); width:100%; max-width:520px; max-height:92vh; overflow-y:auto;
+    border-radius:18px 18px 0 0; padding:22px; box-shadow:var(--shadow);
+  }
+  @media (min-width:600px){ .modal{ border-radius:18px; } }
+  .modal-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .modal-head h2{ margin:0; font-size:20px; }
+  .iconbtn{ background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-soft); line-height:1; padding:4px; }
+  .seg{ display:flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:16px; }
+  .seg button{ flex:1; background:var(--surface); border:none; padding:10px; font-weight:700; font-size:13.5px; color:var(--ink-soft); cursor:pointer; }
+  .seg button.active{ background:var(--ink); color:var(--bg); }
+  .bean-picker{ display:flex; gap:4px; }
+  .bean-picker .bean{ width:24px; height:24px; cursor:pointer; }
+  .modal-foot{ display:flex; justify-content:space-between; gap:10px; margin-top:18px; }
+  .hint{ font-size:12px; color:var(--ink-faint); margin-top:4px; }
+  .photo-preview{ width:100%; height:140px; object-fit:cover; border-radius:10px; margin-top:8px; display:none; }
+
+  .toast-wrap{ position:fixed; bottom:calc(92px + env(safe-area-inset-bottom)); left:0; right:0; display:flex; justify-content:center; z-index:80; pointer-events:none; }
+  .toast{
+    background:var(--ink); color:var(--bg); padding:10px 16px; border-radius:10px; font-size:13.5px;
+    display:flex; align-items:center; gap:12px; box-shadow:var(--shadow); pointer-events:auto;
+  }
+  .toast button{ background:none; border:none; color:var(--amber); font-weight:700; cursor:pointer; font-size:13px; }
+
+  .venue-only{ display:none; }
+  .venue-only.show{ display:flex; }
+</style>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="bean" viewBox="0 0 24 24">
+    <path d="M12 2C6.5 2 2 6.8 2 12.5S6.5 23 12 23s10-4.8 10-10.5S17.5 2 12 2z" fill="currentColor" opacity="0.18"/>
+    <path d="M12 2C6.5 2 2 6.8 2 12.5S6.5 23 12 23s10-4.8 10-10.5S17.5 2 12 2z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M12 3.5C9 7 9 18 12 21.5" fill="none" stroke="currentColor" stroke-width="1.4"/>
+  </symbol>
+</svg>
+
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <span class="mark">Tasa</span>
+      <span class="tag" id="tagline">your coffee, tallied</span>
+    </div>
+    <button class="streakpill" id="streakPill" title="See your streak">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h10v6a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-6z"/><path d="M16 11.5h1.3a2 2 0 0 1 0 4H16"/><path d="M9 7.3c-.7-.8-.7-1.5 0-2.3M12.5 7.3c-.7-.8-.7-1.5 0-2.3"/></svg>
+      <span id="streakCount">0</span>-day streak
+    </button>
+  </div>
+
+  <!-- WALL -->
+  <section class="view active" id="view-wall">
+    <div class="wall-head">
+      <div class="filters">
+        <button class="chip active" data-filter="all">All</button>
+        <button class="chip" data-filter="home">Home</button>
+        <button class="chip" data-filter="away">Away</button>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost btn-sm" id="btnRepeat">Repeat yesterday</button>
+        <button class="btn btn-ghost btn-sm" id="btnSkip">No coffee today</button>
+      </div>
+    </div>
+    <div class="feed" id="feed"></div>
+  </section>
+
+  <!-- WRAPPED -->
+  <section class="view" id="view-wrapped">
+    <div class="wrapped-controls">
+      <span class="mono" id="wrappedPeriodLabel" style="font-size:13px;color:var(--ink-soft);"></span>
+      <label class="hide-toggle"><input type="checkbox" id="hideAmount"> hide amount when sharing</label>
+    </div>
+    <div id="wrappedCard"></div>
+    <div style="display:flex;justify-content:center;margin:2px 0 10px;">
+      <button class="btn btn-primary" id="btnShareWrapped">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.7l7.6-4.4M8.2 13.3l7.6 4.4"/></svg>
+        Share
+      </button>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--ink-faint);max-width:380px;margin:0 auto 4px;">
+      A native app would let you save this straight to your camera roll — sharing here sends the summary as text.
+    </p>
+
+    <div class="section-title">Your coffee profile</div>
+    <div class="panel" id="insightsPanel"></div>
+  </section>
+
+  <!-- BADGES -->
+  <section class="view" id="view-badges">
+    <p class="desc" style="color:var(--ink-soft);font-size:13.5px;margin:0 0 4px;max-width:56ch;">Titles unlock as you log — no monthly reset, just what you've actually earned.</p>
+    <div id="badgeShelf"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="view" id="view-settings">
+    <div class="panel">
+      <h3>Profile</h3>
+      <p class="desc">Just for you — used to personalize your Wrapped and greeting. No account, nothing leaves this device.</p>
+      <div class="field-row">
+        <div class="field"><label>Name</label><input type="text" id="profileName" placeholder="e.g. Jovan" maxlength="24"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="saveProfile" style="margin-top:10px;">Save name</button>
+    </div>
+
+    <div class="panel">
+      <h3>Bean profile</h3>
+      <p class="desc">Set your bag price once — home-brew cost per cup fills in automatically from here on.</p>
+      <div class="field-row">
+        <div class="field"><label>Bag price (₱)</label><input type="number" id="bagPrice" min="0" step="1"></div>
+        <div class="field"><label>Cups per bag</label><input type="number" id="cupsPerBag" min="1" step="1"></div>
+      </div>
+      <p class="hint" id="costPerCupHint"></p>
+      <button class="btn btn-ghost btn-sm" id="saveBean" style="margin-top:10px;">Save bean profile</button>
+    </div>
+
+    <div class="panel">
+      <h3>Sample data</h3>
+      <p class="desc">A few sample cups are in your cupboard so you can see how it feels. They clear on their own once you log something real — or clear them now.</p>
+      <button class="btn btn-quiet btn-sm" id="clearSample">Clear sample cups</button>
+      <span class="hint" id="sampleStatus"></span>
+    </div>
+
+    <div class="panel">
+      <h3>Widget concept</h3>
+      <p class="desc">A native app version of Tasa could put this right on your home screen. Mockup below — a web page can't actually add one, so this is a preview, not a working widget.</p>
+      <div id="widgetMock" style="max-width:220px;"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Your data</h3>
+      <p class="desc">Everything lives on this device only. Export a backup before clearing site data, or move it to another browser.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-ghost btn-sm" id="btnExport">Export data</button>
+        <button class="btn btn-ghost btn-sm" id="btnImport">Import data</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="bottomnav">
+  <div class="bottomnav-inner">
+    <button class="navitem active" data-tab="wall">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 3.5c-.6.7-.6 1.3 0 2M12 3.5c-.6.7-.6 1.3 0 2"/></svg>
+      <span>Cupboard</span>
+    </button>
+    <button class="navitem" data-tab="wrapped">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.6 4.2L18 9l-4.4 1.8L12 15l-1.6-4.2L6 9l4.4-1.8L12 3z"/><path d="M19 14l.8 2.1L22 17l-2.2.9L19 20l-.8-2.1L16 17l2.2-.9L19 14z"/></svg>
+      <span>Wrapped</span>
+    </button>
+    <button class="navfab" id="btnAdd" aria-label="Log a cup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
+    <button class="navitem" data-tab="badges">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><path d="M9 13.5L7.5 21 12 18.5 16.5 21 15 13.5"/></svg>
+      <span>Badges</span>
+    </button>
+    <button class="navitem" data-tab="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 13.5a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H4a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V4a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1H20a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.6 1z"/></svg>
+      <span>Settings</span>
+    </button>
+  </div>
+</div>
+
+<!-- Streak modal -->
+<div class="overlay" id="streakOverlay">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-head">
+      <h2>Your streak</h2>
+      <button class="iconbtn" id="closeStreak">✕</button>
+    </div>
+    <div style="text-align:center;padding:2px 0 16px;">
+      <svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="var(--amber)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 6px;display:block;"><path d="M6 10h10v6a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-6z"/><path d="M16 11.5h1.3a2 2 0 0 1 0 4H16"/><path d="M9 7.3c-.7-.8-.7-1.5 0-2.3M12.5 7.3c-.7-.8-.7-1.5 0-2.3"/></svg>
+      <div class="mono" style="font-size:34px;font-weight:700;" id="streakModalCount">0</div>
+      <div style="color:var(--ink-soft);font-size:13px;">day streak</div>
+    </div>
+    <div id="streakWeek" style="display:flex;justify-content:space-between;gap:6px;margin-bottom:6px;"></div>
+    <div class="hint" style="text-align:center;margin-bottom:10px;">dashed ring = covered by a rain check</div>
+    <div class="wrapped-row" style="border-top:1px solid var(--line);color:var(--ink);"><span class="k" style="color:var(--ink-soft);">Longest streak</span><span class="v mono" id="streakBest">0 days</span></div>
+    <div class="wrapped-row" style="color:var(--ink);"><span class="k" style="color:var(--ink-soft);">Rain checks saved</span><span class="v mono" id="streakFreezeCount">0</span></div>
+    <p class="hint">Earn one every 7-day streak — it quietly covers a day you miss so your streak doesn't reset.</p>
+    <div id="streakNext" style="margin-top:14px;"></div>
+  </div>
+</div>
+
+<!-- Entry modal -->
+<div class="overlay" id="entryOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="entryModalTitle">Log a cup</h2>
+      <button class="iconbtn" id="closeEntry">✕</button>
+    </div>
+
+    <div class="seg" id="kindSeg">
+      <button data-kind="home" class="active">Home</button>
+      <button data-kind="away">Away</button>
+    </div>
+
+    <div class="field-row venue-only" id="venueRow">
+      <div class="field">
+        <label>Where</label>
+        <select id="venueTag">
+          <option value="cafe">Café</option>
+          <option value="convenience">Convenience store</option>
+          <option value="office">Office</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Name</label>
+        <input type="text" id="venueName" list="venueList" placeholder="e.g. Yardstick Katipunan">
+        <datalist id="venueList"></datalist>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Method / drink</label>
+        <select id="method">
+          <option>Pour-over (V60)</option>
+          <option>Chemex</option>
+          <option>AeroPress</option>
+          <option>French press</option>
+          <option>Moka pot</option>
+          <option>Espresso</option>
+          <option>Americano</option>
+          <option>Cold brew</option>
+          <option>Drip / auto-drip</option>
+          <option>Instant</option>
+          <option value="__other">Other…</option>
+        </select>
+        <input type="text" id="methodOther" placeholder="Name it" style="display:none;margin-top:6px;">
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input type="date" id="entryDate">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Price (₱)</label>
+        <input type="number" id="price" min="0" step="1">
+        <p class="hint" id="priceHint"></p>
+      </div>
+      <div class="field" style="justify-content:flex-end;">
+        <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="free" style="width:auto;"> free / gifted</label>
+        <label style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+          <select id="timeOfDay" style="margin-top:2px;">
+            <option value="">Time of day (optional)</option>
+            <option value="morning">Morning</option>
+            <option value="afternoon">Afternoon</option>
+            <option value="evening">Evening</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Rating</label>
+      <div class="bean-picker" id="ratingPicker"></div>
+    </div>
+
+    <div class="field-row">
+      <div class="field" style="flex:2;">
+        <label>Flavor notes (optional)</label>
+        <div id="flavorPicker" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+      </div>
+      <div class="field">
+        <label>Roast (optional)</label>
+        <select id="roast">
+          <option value="">—</option>
+          <option value="light">Light</option>
+          <option value="medium">Medium</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Caption (optional)</label>
+      <textarea id="caption" rows="2" style="font-family:'Karla',sans-serif;font-size:14px;" placeholder="How was it?"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Photo (optional)</label>
+      <input type="file" id="photo" accept="image/*">
+      <img class="photo-preview" id="photoPreview">
+    </div>
+
+    <div class="modal-foot">
+      <button class="btn btn-danger btn-sm" id="deleteEntry" style="display:none;">Delete</button>
+      <div style="flex:1;"></div>
+      <button class="btn btn-ghost" id="cancelEntry">Cancel</button>
+      <button class="btn btn-primary" id="saveEntry">Save cup</button>
+    </div>
+  </div>
+</div>
+
+<!-- Export/Import modal -->
+<div class="overlay" id="dataOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="dataModalTitle">Export data</h2>
+      <button class="iconbtn" id="closeData">✕</button>
+    </div>
+    <p class="desc" id="dataModalDesc" style="color:var(--ink-soft);font-size:13px;"></p>
+    <textarea id="dataArea" rows="10"></textarea>
+    <div class="modal-foot">
+      <div style="flex:1;"></div>
+      <button class="btn btn-ghost" id="dataSecondary">Copy to clipboard</button>
+      <button class="btn btn-primary" id="dataPrimary">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+(function(){
+  "use strict";
+  var STORE_KEY = "tasa_state_v1";
+  var METHODS = ["Pour-over (V60)","Chemex","AeroPress","French press","Moka pot","Espresso","Americano","Cold brew","Drip / auto-drip","Instant"];
+  var FLAVORS = ["Fruity","Floral","Nutty","Chocolatey","Caramel","Earthy","Bright/Acidic","Bitter"];
+  var FALLBACK_AWAY_PRICE = 150;
+
+  var JOKES = [
+    {max:200, lines:["that's roughly one tricycle ride around the block.","about a jeepney fare with change to spare."]},
+    {max:500, lines:["that's one Jollibee Chickenjoy meal.","close to a movie ticket, popcorn included."]},
+    {max:1000, lines:["that's a Grab ride clear across the metro.","roughly a month of load for your phone."]},
+    {max:3000, lines:["that's a full tank for a small car.","about a weekend trip's worth of bus fare."]},
+    {max:6000, lines:["that's most of a budget flight to Cebu.","close to a month's electric bill for a small unit."]},
+    {max:Infinity, lines:["that's new-phone territory.","that's a plane ticket somewhere with a beach."]}
+  ];
+
+  var BADGES = [
+    {id:"first_cup", name:"First Cup", desc:"Logged your first cup", group:"Milestones", need:1, calc:function(s){return s.totalCups;}},
+    {id:"cups_50", name:"50 Cups Club", desc:"50 cups logged", group:"Milestones", need:50, calc:function(s){return s.totalCups;}},
+    {id:"cups_100", name:"100 Cups Club", desc:"100 cups logged", group:"Milestones", need:100, calc:function(s){return s.totalCups;}},
+    {id:"cups_500", name:"500 Cups Club", desc:"500 cups logged", group:"Milestones", need:500, calc:function(s){return s.totalCups;}},
+
+    {id:"home_10", name:"Home Brewer", desc:"10 cups brewed at home", group:"Home dedication", need:10, calc:function(s){return s.homeCount;}},
+    {id:"home_50", name:"Dedicated Home Brewer", desc:"50 cups brewed at home", group:"Home dedication", need:50, calc:function(s){return s.homeCount;}},
+    {id:"home_200", name:"Home Brewing Master", desc:"200 cups brewed at home", group:"Home dedication", need:200, calc:function(s){return s.homeCount;}},
+
+    {id:"cafe_5", name:"Café Explorer", desc:"5 different cafés visited", group:"Exploration", need:5, calc:function(s){return s.uniqueCafes;}},
+    {id:"cafe_15", name:"Café Connoisseur", desc:"15 different cafés visited", group:"Exploration", need:15, calc:function(s){return s.uniqueCafes;}},
+    {id:"cafe_30", name:"City Roaster Hunter", desc:"30 different cafés visited", group:"Exploration", need:30, calc:function(s){return s.uniqueCafes;}},
+
+    {id:"loyal_5", name:"Regular", desc:"Visited one café 5 times", group:"Loyalty", need:5, calc:function(s){return s.maxSameCafe;}},
+    {id:"loyal_15", name:"The Usual", desc:"Visited one café 15 times", group:"Loyalty", need:15, calc:function(s){return s.maxSameCafe;}},
+    {id:"loyal_30", name:"Café Loyalist", desc:"Visited one café 30 times", group:"Loyalty", need:30, calc:function(s){return s.maxSameCafe;}},
+
+    {id:"streak_7", name:"Consistent Sipper", desc:"7-day logging streak", group:"Streaks", need:7, calc:function(s){return s.bestStreak;}},
+    {id:"streak_30", name:"Ritualist", desc:"30-day logging streak", group:"Streaks", need:30, calc:function(s){return s.bestStreak;}},
+    {id:"streak_100", name:"Unbreakable", desc:"100-day logging streak", group:"Streaks", need:100, calc:function(s){return s.bestStreak;}},
+
+    {id:"frugal", name:"Frugal Brewer", desc:"80%+ home-brewed this month", group:"Habits", need:1, calc:function(s){return s.homeRatioThisMonth>=0.8?1:0;}},
+    {id:"early_bird", name:"Early Bird", desc:"Mostly morning cups", group:"Habits", need:1, calc:function(s){return s.mostlyMorning?1:0;}},
+    {id:"night_owl", name:"Night Owl", desc:"Mostly evening cups", group:"Habits", need:1, calc:function(s){return s.mostlyEvening?1:0;}},
+
+    {id:"method_5", name:"Method Explorer", desc:"Tried 5 different methods", group:"Exploration", need:5, calc:function(s){return s.uniqueMethods;}},
+    {id:"method_all", name:"Jack of All Brews", desc:"Tried every listed method", group:"Exploration", need:METHODS.length, calc:function(s){return s.uniqueListedMethods;}},
+
+    {id:"m_pourover", name:"Pour-Over Enthusiast", desc:"20 pour-over cups", group:"Method mastery", need:20, calc:function(s){return s.methodCounts["Pour-over (V60)"]||0;}},
+    {id:"m_espresso", name:"Espresso Devotee", desc:"20 espresso cups", group:"Method mastery", need:20, calc:function(s){return s.methodCounts["Espresso"]||0;}},
+    {id:"m_aeropress", name:"AeroPress Adept", desc:"20 AeroPress cups", group:"Method mastery", need:20, calc:function(s){return s.methodCounts["AeroPress"]||0;}},
+    {id:"m_frenchpress", name:"French Press Fan", desc:"20 French press cups", group:"Method mastery", need:20, calc:function(s){return s.methodCounts["French press"]||0;}},
+    {id:"m_coldbrew", name:"Cold Brew Aficionado", desc:"20 cold brew cups", group:"Method mastery", need:20, calc:function(s){return s.methodCounts["Cold brew"]||0;}}
+  ];
+
+  // ---------------- state ----------------
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+  function todayISO(offsetDays){
+    var d = new Date();
+    if(offsetDays) d.setDate(d.getDate()+offsetDays);
+    return d.toISOString().slice(0,10);
+  }
+  function defaultState(){
+    return {
+      entries: sampleEntries(),
+      beanProfile: {bagPrice:450, cupsPerBag:16},
+      profile: {name:""},
+      hideAmount:false,
+      seenRealEntry:false
+    };
+  }
+  function sampleEntries(){
+    return [
+      {id:uid(), kind:"home", date:todayISO(0), method:"Pour-over (V60)", price:28, free:false, rating:4, caption:"Bright and a little floral. Good start.", photo:null, timeOfDay:"morning", flavors:["Floral","Bright/Acidic"], roast:"light", isSample:true},
+      {id:uid(), kind:"away", venueTag:"cafe", venueName:"Yardstick Coffee", date:todayISO(-1), method:"Espresso", price:160, free:false, rating:5, caption:"Worth the hype, honestly.", photo:null, timeOfDay:"afternoon", flavors:["Chocolatey","Caramel"], roast:"medium", isSample:true},
+      {id:uid(), kind:"home", date:todayISO(-2), method:"French press", price:28, free:false, rating:3, caption:"", photo:null, timeOfDay:"morning", flavors:["Earthy"], roast:"dark", isSample:true},
+      {id:uid(), kind:"away", venueTag:"convenience", venueName:"7-Eleven", date:todayISO(-3), method:"Instant", price:35, free:false, rating:2, caption:"Fuel, not flavor.", photo:null, timeOfDay:"morning", flavors:["Bitter"], roast:"dark", isSample:true},
+      {id:uid(), kind:"home", date:todayISO(-4), method:"Pour-over (V60)", price:28, free:false, rating:4, caption:"", photo:null, timeOfDay:"morning", flavors:["Fruity","Floral"], roast:"light", isSample:true},
+      {id:uid(), kind:"away", venueTag:"cafe", venueName:"Wildflour Café", date:todayISO(-6), method:"Cold brew", price:175, free:false, rating:4, caption:"Sat outside, good people-watching.", photo:null, timeOfDay:"afternoon", flavors:["Fruity","Nutty"], roast:"medium", isSample:true},
+      {id:uid(), kind:"home", date:todayISO(-7), method:"AeroPress", price:28, free:false, rating:5, caption:"Finally nailed the ratio.", photo:null, timeOfDay:"morning", flavors:["Chocolatey"], roast:"medium", isSample:true},
+      {id:uid(), kind:"away", venueTag:"cafe", venueName:"Yardstick Coffee", date:todayISO(-9), method:"Espresso", price:160, free:false, rating:5, caption:"", photo:null, timeOfDay:"morning", flavors:["Caramel","Nutty"], roast:"medium", isSample:true},
+      {id:uid(), kind:"away", venueTag:"office", venueName:"Office pantry", date:todayISO(-11), method:"Instant", price:0, free:true, rating:2, caption:"Free is free.", photo:null, timeOfDay:"morning", flavors:["Bitter"], roast:"dark", isSample:true},
+      {id:uid(), kind:"home", date:todayISO(-13), method:"Moka pot", price:28, free:false, rating:4, caption:"", photo:null, timeOfDay:"evening", flavors:["Earthy","Bitter"], roast:"dark", isSample:true}
+    ];
+  }
+  function load(){
+    try{
+      var raw = localStorage.getItem(STORE_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){}
+    var s = defaultState();
+    save(s);
+    return s;
+  }
+  function save(s){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }catch(e){} }
+
+  var state = load();
+
+  // ---------------- helpers ----------------
+  function peso(n){ return "₱"+Math.round(n).toLocaleString("en-PH"); }
+  function fmtDate(iso){
+    var d = new Date(iso+"T00:00:00");
+    return d.toLocaleDateString("en-PH",{month:"short",day:"numeric"});
+  }
+  function beanIcon(size, color, filled){
+    return '<svg class="bean" width="'+size+'" height="'+size+'" style="color:'+color+';opacity:'+(filled?1:0.3)+'"><use href="#bean"/></svg>';
+  }
+  function costPerCup(){
+    var bp = state.beanProfile;
+    if(!bp || !bp.bagPrice || !bp.cupsPerBag) return null;
+    return bp.bagPrice/bp.cupsPerBag;
+  }
+  function realEntries(){ return state.entries.filter(function(e){return e.kind!=="skip";}); }
+
+  // ---------------- stats ----------------
+  function computeStats(){
+    var entries = state.entries;
+    var real = realEntries();
+    var now = new Date();
+    var monthKey = now.getFullYear()+"-"+now.getMonth();
+    function inThisMonth(e){
+      var d = new Date(e.date+"T00:00:00");
+      return (d.getFullYear()+"-"+d.getMonth())===monthKey;
+    }
+    var monthReal = real.filter(inThisMonth);
+
+    var totalCups = real.length;
+    var homeCount = real.filter(function(e){return e.kind==="home";}).length;
+    var awayCount = real.filter(function(e){return e.kind==="away";}).length;
+
+    var monthHome = monthReal.filter(function(e){return e.kind==="home";});
+    var monthAway = monthReal.filter(function(e){return e.kind==="away";});
+    function spendOf(list){ return list.reduce(function(a,e){return a+(e.free?0:(e.price||0));},0); }
+    var monthHomeSpend = spendOf(monthHome);
+    var monthAwaySpend = spendOf(monthAway);
+    var monthSpend = monthHomeSpend+monthAwaySpend;
+
+    var awayPrices = real.filter(function(e){return e.kind==="away" && !e.free && e.price;}).map(function(e){return e.price;});
+    var avgAway = awayPrices.length? (awayPrices.reduce(function(a,b){return a+b;},0)/awayPrices.length) : FALLBACK_AWAY_PRICE;
+    var cpc = costPerCup();
+    var avgHomeCost = cpc!==null ? cpc : (real.filter(function(e){return e.kind==="home"&&e.price;}).reduce(function(a,e,idx,arr){return a+e.price/arr.length;},0) || 28);
+    var monthSavings = Math.max(0,(avgAway-avgHomeCost))*monthHome.length;
+
+    var cafeCounts = {};
+    real.filter(function(e){return e.kind==="away" && e.venueTag==="cafe" && e.venueName;}).forEach(function(e){
+      cafeCounts[e.venueName]=(cafeCounts[e.venueName]||0)+1;
+    });
+    var topCafe=null, maxSameCafe=0;
+    Object.keys(cafeCounts).forEach(function(k){ if(cafeCounts[k]>maxSameCafe){maxSameCafe=cafeCounts[k]; topCafe=k;} });
+    var uniqueCafes = Object.keys(cafeCounts).length;
+
+    var methodCounts = {};
+    real.forEach(function(e){ var m=e.method||"Other"; methodCounts[m]=(methodCounts[m]||0)+1; });
+    var topMethod=null, topMethodCount=0;
+    Object.keys(methodCounts).forEach(function(k){ if(methodCounts[k]>topMethodCount){topMethodCount=methodCounts[k]; topMethod=k;} });
+    var uniqueMethods = Object.keys(methodCounts).length;
+    var uniqueListedMethods = Object.keys(methodCounts).filter(function(m){return METHODS.indexOf(m)>-1;}).length;
+
+    // streak: consecutive days (any entry incl. skip) ending today or yesterday
+    var daysWithEntry = {};
+    entries.forEach(function(e){ daysWithEntry[e.date]=true; });
+    (state.freezeDates||[]).forEach(function(d){ daysWithEntry[d]=true; });
+    var streak=0;
+    var cursor = new Date();
+    if(!daysWithEntry[todayISO(0)]) cursor.setDate(cursor.getDate()-1);
+    while(true){
+      var iso = cursor.toISOString().slice(0,10);
+      if(daysWithEntry[iso]){ streak++; cursor.setDate(cursor.getDate()-1); } else break;
+    }
+    // best streak overall (simple approximation: scan all dates)
+    var allDates = Object.keys(daysWithEntry).sort();
+    var bestStreak=0, run=0, prev=null;
+    allDates.forEach(function(iso){
+      if(prev){
+        var d1=new Date(prev+"T00:00:00"), d2=new Date(iso+"T00:00:00");
+        var diff=(d2-d1)/86400000;
+        run = diff===1 ? run+1 : 1;
+      } else run=1;
+      if(run>bestStreak) bestStreak=run;
+      prev=iso;
+    });
+    bestStreak = Math.max(bestStreak, streak);
+
+    var homeRatioThisMonth = monthReal.length? (monthHome.length/monthReal.length) : 0;
+    var tod = {morning:0, afternoon:0, evening:0};
+    real.forEach(function(e){ if(e.timeOfDay) tod[e.timeOfDay]=(tod[e.timeOfDay]||0)+1; });
+    var todTotal = tod.morning+tod.afternoon+tod.evening;
+    var mostlyMorning = todTotal>0 && tod.morning/todTotal>=0.6;
+    var mostlyEvening = todTotal>0 && tod.evening/todTotal>=0.6;
+
+    return {
+      totalCups:totalCups, homeCount:homeCount, awayCount:awayCount,
+      monthSpend:monthSpend, monthHomeSpend:monthHomeSpend, monthAwaySpend:monthAwaySpend,
+      monthSavings:monthSavings, topCafe:topCafe, maxSameCafe:maxSameCafe, uniqueCafes:uniqueCafes,
+      topMethod:topMethod, uniqueMethods:uniqueMethods, uniqueListedMethods:uniqueListedMethods,
+      methodCounts:methodCounts, streak:streak, bestStreak:bestStreak,
+      homeRatioThisMonth:homeRatioThisMonth, mostlyMorning:mostlyMorning, mostlyEvening:mostlyEvening,
+      monthEntryCount: monthReal.length
+    };
+  }
+
+  function jokeFor(amount){
+    var bucket = JOKES.filter(function(j){return amount<=j.max;})[0] || JOKES[JOKES.length-1];
+    var idx = Math.floor(amount+state.entries.length) % bucket.lines.length;
+    return bucket.lines[idx];
+  }
+
+  // ---------------- rendering ----------------
+  var els = {};
+  ["feed","streakCount","wrappedCard","wrappedPeriodLabel","badgeShelf","bagPrice","cupsPerBag",
+   "costPerCupHint","sampleStatus","entryModalTitle","kindSeg","venueRow","venueTag","venueName",
+   "venueList","method","methodOther","entryDate","price","priceHint","free","timeOfDay","ratingPicker",
+   "caption","photo","photoPreview","deleteEntry","toastWrap","hideAmount"
+  ].forEach(function(id){ els[id]=document.getElementById(id); });
+
+  var activeFilter = "all";
+  var activeTab = "wall";
+
+  function renderStreak(){
+    els.streakCount.textContent = computeStats().streak;
+  }
+
+  function renderTagline(){
+    var name = (state.profile && state.profile.name) ? state.profile.name.trim() : "";
+    document.getElementById("tagline").textContent = name ? ("hey, "+name+" ☕") : "your coffee, tallied";
+  }
+
+  function renderFeed(){
+    var list = state.entries.slice().sort(function(a,b){ return a.date<b.date?1:(a.date>b.date?-1: (a.id<b.id?1:-1)); });
+    if(activeFilter!=="all") list = list.filter(function(e){ return e.kind===activeFilter; });
+    if(list.length===0){
+      els.feed.innerHTML = '<div class="empty">No cups here yet. Tap the + below to start your cupboard.</div>';
+      return;
+    }
+    els.feed.innerHTML = list.map(renderCard).join("");
+    list.forEach(function(e){
+      var node = document.getElementById("card-"+e.id);
+      if(node) node.addEventListener("click", function(){ if(e.kind!=="skip") openEntryModal(e); });
+    });
+  }
+
+  function renderCard(e){
+    if(e.kind==="skip"){
+      return '<div class="card skip" id="card-'+e.id+'"><span class="card-sub">'+fmtDate(e.date)+' — no coffee today, streak kept.</span></div>';
+    }
+    var tagClass = e.kind==="home" ? "tag-home" : "tag-away";
+    var tagText = e.kind==="home" ? "Home" : (e.venueTag ? e.venueTag.charAt(0).toUpperCase()+e.venueTag.slice(1) : "Away");
+    var title = e.kind==="home" ? e.method : (e.venueName || "Away") ;
+    var sub = e.kind==="home" ? "Home brew" : e.method;
+    var priceText = e.free ? "Free" : (e.price!=null ? peso(e.price) : "—");
+    var beans = "";
+    for(var i=1;i<=5;i++){ beans += beanIcon(13, "var(--amber)", i<=(e.rating||0)); }
+    var richest = "";
+    if(e.photo){
+      richest = '<div class="card-row"><img class="card-photo" src="'+e.photo+'"><div class="card-main">'+cardMain()+'</div></div>';
+    } else {
+      richest = cardMain();
+    }
+    function cardMain(){
+      var body = '<div class="card-top"><span class="badge-tag '+tagClass+'">'+tagText+'</span>'+(e.isSample?'<span class="sample-tag">Sample</span>':'')+'</div>';
+      body += '<div class="card-title">'+escapeHtml(title)+'</div>';
+      body += '<div class="card-sub">'+escapeHtml(sub)+' · '+fmtDate(e.date)+'</div>';
+      if(e.caption){ body += '<div class="card-caption">"'+escapeHtml(e.caption)+'"</div>'; }
+      body += '<div class="card-meta"><span class="price mono">'+priceText+'</span><span class="beans">'+beans+'</span></div>';
+      return body;
+    }
+    return '<div class="card" id="card-'+e.id+'">'+richest+'</div>';
+  }
+
+  function escapeHtml(s){ var d=document.createElement("div"); d.textContent=s||""; return d.innerHTML; }
+
+  function renderWrapped(){
+    var s = computeStats();
+    var now = new Date();
+    els.wrappedPeriodLabel.textContent = now.toLocaleDateString("en-PH",{month:"long",year:"numeric"}).toUpperCase();
+    var hide = state.hideAmount;
+    els.hideAmount.checked = hide;
+    var amountDisplay = hide ? "₱•••" : peso(s.monthSpend);
+    var joke = hide ? "" : jokeFor(s.monthSpend);
+    var newBadges = unlockedBadges(s).slice(-3);
+
+    var name = (state.profile && state.profile.name) ? state.profile.name.trim() : "";
+    var html = '<div class="wrapped-card">';
+    html += '<div class="wrapped-eyebrow">'+(name? escapeHtml(name)+"&rsquo;s month in coffee" : "Your month in coffee")+'</div>';
+    html += '<div class="wrapped-hero mono">'+amountDisplay+'</div>';
+    if(joke) html += '<div class="wrapped-joke">'+joke+'</div>';
+    html += '<div class="wrapped-row"><span class="k">Cups this month</span><span class="v">'+s.monthEntryCount+'</span></div>';
+    html += '<div class="wrapped-row"><span class="k">Home-brewed</span><span class="v">'+countThisMonthByKind("home")+'</span></div>';
+    html += '<div class="wrapped-row"><span class="k">Away</span><span class="v">'+countThisMonthByKind("away")+'</span></div>';
+    html += '<div class="wrapped-row"><span class="k">Est. saved brewing at home</span><span class="v">'+(hide?"₱•••":peso(s.monthSavings))+'</span></div>';
+    html += '<div class="wrapped-row"><span class="k">Top café</span><span class="v" style="font-family:Karla,sans-serif;">'+(s.topCafe||"—")+'</span></div>';
+    html += '<div class="wrapped-row"><span class="k">Go-to method</span><span class="v" style="font-family:Karla,sans-serif;">'+(s.topMethod||"—")+'</span></div>';
+    html += '<div class="wrapped-row"><span class="k">Longest streak</span><span class="v">'+s.bestStreak+' days</span></div>';
+    if(newBadges.length){
+      html += '<div class="wrapped-badges"><div class="label">Badges earned</div>';
+      newBadges.forEach(function(b){ html += '<span class="wrapped-badge-pill">'+beanIcon(12,"#E0A24E",true)+' '+b.name+'</span>'; });
+      html += '</div>';
+    }
+    html += '</div>';
+    els.wrappedCard.innerHTML = html;
+  }
+  function countThisMonthByKind(kind){
+    var now=new Date(); var monthKey=now.getFullYear()+"-"+now.getMonth();
+    return realEntries().filter(function(e){
+      var d=new Date(e.date+"T00:00:00");
+      return (d.getFullYear()+"-"+d.getMonth())===monthKey && e.kind===kind;
+    }).length;
+  }
+
+  function unlockedBadges(s){
+    return BADGES.filter(function(b){ return b.calc(s) >= b.need; });
+  }
+
+  function renderBadges(){
+    var s = computeStats();
+    var groups = {};
+    BADGES.forEach(function(b){ (groups[b.group]=groups[b.group]||[]).push(b); });
+    var html = "";
+    Object.keys(groups).forEach(function(g){
+      html += '<div class="section-title">'+g+'</div><div class="badge-grid">';
+      groups[g].forEach(function(b){
+        var val = b.calc(s);
+        var unlocked = val>=b.need;
+        var pct = Math.min(100, Math.round(100*val/b.need));
+        html += '<div class="badge-cell '+(unlocked?"":"locked")+'">';
+        html += beanIcon(30, unlocked?"var(--amber)":"var(--ink-faint)", true);
+        html += '<div class="bname">'+b.name+'</div><div class="bdesc">'+b.desc+'</div>';
+        if(!unlocked){ html += '<div class="bprogress"><div style="width:'+pct+'%"></div></div><div class="hint">'+val+' / '+b.need+'</div>'; }
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    els.badgeShelf.innerHTML = html;
+  }
+
+  function renderSettings(){
+    document.getElementById("profileName").value = (state.profile && state.profile.name) || "";
+    els.bagPrice.value = state.beanProfile.bagPrice||"";
+    els.cupsPerBag.value = state.beanProfile.cupsPerBag||"";
+    var cpc = costPerCup();
+    els.costPerCupHint.textContent = cpc? ("≈ "+peso(cpc)+" per home-brewed cup") : "Set both fields to auto-fill home brew cost.";
+    var sampleCount = state.entries.filter(function(e){return e.isSample;}).length;
+    els.sampleStatus.textContent = sampleCount? (sampleCount+" sample entries in your cupboard") : "No sample entries remain.";
+  }
+
+  function renderVenueList(){
+    var names = {};
+    state.entries.forEach(function(e){ if(e.kind==="away" && e.venueName) names[e.venueName]=true; });
+    els.venueList.innerHTML = Object.keys(names).map(function(n){ return '<option value="'+escapeHtml(n)+'">'; }).join("");
+  }
+
+  function renderAll(){
+    reconcileFreezes();
+    renderTagline();
+    renderStreak(); renderFeed(); renderWrapped(); renderInsights(); renderBadges(); renderSettings(); renderVenueList(); renderWidgetMock();
+  }
+
+  // ---------------- tabs / filters ----------------
+  document.querySelectorAll(".navitem").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      document.querySelectorAll(".navitem").forEach(function(b){b.classList.remove("active");});
+      btn.classList.add("active");
+      activeTab = btn.dataset.tab;
+      document.querySelectorAll(".view").forEach(function(v){v.classList.remove("active");});
+      document.getElementById("view-"+activeTab).classList.add("active");
+      if(activeTab==="wrapped"){ renderWrapped(); renderInsights(); }
+      if(activeTab==="badges") renderBadges();
+      if(activeTab==="settings"){ renderSettings(); renderWidgetMock(); }
+    });
+  });
+  document.querySelectorAll(".chip").forEach(function(chip){
+    chip.addEventListener("click", function(){
+      document.querySelectorAll(".chip").forEach(function(c){c.classList.remove("active");});
+      chip.classList.add("active");
+      activeFilter = chip.dataset.filter;
+      renderFeed();
+    });
+  });
+
+  // ---------------- toast ----------------
+  function toast(msg, actionLabel, actionFn){
+    var t = document.createElement("div");
+    t.className="toast";
+    t.innerHTML = '<span>'+msg+'</span>';
+    if(actionLabel){
+      var b = document.createElement("button");
+      b.textContent = actionLabel;
+      b.addEventListener("click", function(){ actionFn(); t.remove(); });
+      t.appendChild(b);
+    }
+    els.toastWrap.appendChild(t);
+    setTimeout(function(){ t.remove(); }, 5000);
+  }
+
+  // ---------------- entry modal ----------------
+  var editingId = null;
+  var currentKind = "home";
+  var currentRating = 0;
+  var currentPhoto = null;
+  var currentFlavors = [];
+
+  function buildFlavorPicker(){
+    var wrap = document.getElementById("flavorPicker");
+    wrap.innerHTML = FLAVORS.map(function(f){
+      var active = currentFlavors.indexOf(f)>-1;
+      return '<button type="button" class="chip'+(active?' active':'')+'" data-flavor="'+f+'" style="font-size:12px;padding:5px 10px;">'+f+'</button>';
+    }).join("");
+    Array.prototype.forEach.call(wrap.querySelectorAll("[data-flavor]"), function(btn){
+      btn.addEventListener("click", function(){
+        var f = btn.dataset.flavor;
+        var idx = currentFlavors.indexOf(f);
+        if(idx>-1) currentFlavors.splice(idx,1); else currentFlavors.push(f);
+        buildFlavorPicker();
+      });
+    });
+  }
+
+  function buildRatingPicker(){
+    els.ratingPicker.innerHTML="";
+    for(var i=1;i<=5;i++){
+      (function(i){
+        var span = document.createElement("span");
+        span.innerHTML = beanIcon(24, "var(--amber)", i<=currentRating);
+        span.style.cursor="pointer";
+        span.addEventListener("click", function(){ currentRating = (currentRating===i)?0:i; buildRatingPicker(); });
+        els.ratingPicker.appendChild(span);
+      })(i);
+    }
+  }
+
+  function setKind(kind){
+    currentKind = kind;
+    document.querySelectorAll("#kindSeg button").forEach(function(b){ b.classList.toggle("active", b.dataset.kind===kind); });
+    els.venueRow.classList.toggle("show", kind==="away");
+    updatePriceHint();
+  }
+  document.querySelectorAll("#kindSeg button").forEach(function(b){ b.addEventListener("click", function(){ setKind(b.dataset.kind); }); });
+
+  els.method.addEventListener("change", function(){
+    els.methodOther.style.display = els.method.value==="__other" ? "block":"none";
+    updatePriceHint();
+  });
+
+  function updatePriceHint(){
+    if(currentKind==="home"){
+      var cpc = costPerCup();
+      if(cpc && (els.price.value===""||els.price.dataset.auto==="1")){
+        els.price.value = Math.round(cpc);
+        els.price.dataset.auto="1";
+      }
+      els.priceHint.textContent = cpc? "Auto-filled from your bean profile — edit anytime." : "No bean profile set yet — enter a rough per-cup cost.";
+    } else {
+      els.priceHint.textContent = "";
+    }
+  }
+  els.price.addEventListener("input", function(){ els.price.dataset.auto="0"; });
+
+  els.photo.addEventListener("change", function(){
+    var file = els.photo.files[0];
+    if(!file){ currentPhoto=null; els.photoPreview.style.display="none"; return; }
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var img = new Image();
+      img.onload = function(){
+        var canvas = document.createElement("canvas");
+        var maxW = 480;
+        var scale = Math.min(1, maxW/img.width);
+        canvas.width = img.width*scale; canvas.height = img.height*scale;
+        canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+        currentPhoto = canvas.toDataURL("image/jpeg",0.75);
+        els.photoPreview.src = currentPhoto;
+        els.photoPreview.style.display="block";
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function openEntryModal(existing){
+    editingId = existing? existing.id : null;
+    els.entryModalTitle.textContent = existing? "Edit cup" : "Log a cup";
+    els.deleteEntry.style.display = existing? "inline-flex":"none";
+    setKind(existing? existing.kind : "home");
+    els.venueTag.value = existing && existing.venueTag ? existing.venueTag : "cafe";
+    els.venueName.value = existing && existing.venueName ? existing.venueName : "";
+    var m = existing? existing.method : "Pour-over (V60)";
+    if(m && METHODS.indexOf(m)===-1){ els.method.value="__other"; els.methodOther.style.display="block"; els.methodOther.value=m; }
+    else { els.method.value = m || "Pour-over (V60)"; els.methodOther.style.display="none"; els.methodOther.value=""; }
+    els.entryDate.value = existing? existing.date : todayISO(0);
+    els.price.value = existing? (existing.price!=null?existing.price:"") : "";
+    els.price.dataset.auto = existing? "0" : "1";
+    els.free.checked = existing? !!existing.free : false;
+    els.timeOfDay.value = existing && existing.timeOfDay ? existing.timeOfDay : "";
+    currentRating = existing? (existing.rating||0) : 0;
+    buildRatingPicker();
+    currentFlavors = existing? (existing.flavors||[]).slice() : [];
+    buildFlavorPicker();
+    document.getElementById("roast").value = existing && existing.roast ? existing.roast : "";
+    els.caption.value = existing? (existing.caption||"") : "";
+    currentPhoto = existing? (existing.photo||null) : null;
+    els.photo.value = "";
+    if(currentPhoto){ els.photoPreview.src=currentPhoto; els.photoPreview.style.display="block"; } else { els.photoPreview.style.display="none"; }
+    if(!existing) updatePriceHint();
+    document.getElementById("entryOverlay").classList.add("open");
+  }
+  function closeEntryModal(){ document.getElementById("entryOverlay").classList.remove("open"); }
+
+  document.getElementById("btnAdd").addEventListener("click", function(){ openEntryModal(null); });
+  document.getElementById("closeEntry").addEventListener("click", closeEntryModal);
+  document.getElementById("cancelEntry").addEventListener("click", closeEntryModal);
+
+  document.getElementById("saveEntry").addEventListener("click", function(){
+    var method = els.method.value==="__other" ? (els.methodOther.value.trim()||"Other") : els.method.value;
+    var entry = {
+      id: editingId || uid(),
+      kind: currentKind,
+      date: els.entryDate.value || todayISO(0),
+      method: method,
+      price: els.free.checked ? 0 : (els.price.value===""? null : Number(els.price.value)),
+      free: els.free.checked,
+      rating: currentRating,
+      caption: els.caption.value.trim(),
+      photo: currentPhoto,
+      timeOfDay: els.timeOfDay.value || null,
+      flavors: currentFlavors.slice(),
+      roast: document.getElementById("roast").value || null,
+      isSample: false
+    };
+    if(currentKind==="away"){
+      entry.venueTag = els.venueTag.value;
+      entry.venueName = els.venueName.value.trim() || (entry.venueTag.charAt(0).toUpperCase()+entry.venueTag.slice(1));
+    }
+    if(editingId){
+      var idx = state.entries.findIndex(function(e){return e.id===editingId;});
+      if(idx>-1) state.entries[idx]=entry;
+    } else {
+      state.entries.push(entry);
+      maybeClearSampleAfterRealEntry();
+    }
+    save(state);
+    closeEntryModal();
+    renderAll();
+  });
+
+  document.getElementById("deleteEntry").addEventListener("click", function(){
+    var idx = state.entries.findIndex(function(e){return e.id===editingId;});
+    if(idx>-1){
+      var removed = state.entries.splice(idx,1)[0];
+      save(state); closeEntryModal(); renderAll();
+      toast("Cup deleted.", "Undo", function(){ state.entries.push(removed); save(state); renderAll(); });
+    }
+  });
+
+  document.getElementById("btnRepeat").addEventListener("click", function(){
+    var y = todayISO(-1);
+    var candidates = state.entries.filter(function(e){return e.date===y && e.kind!=="skip";});
+    if(!candidates.length){ toast("No cup logged yesterday to repeat."); return; }
+    var src = candidates[candidates.length-1];
+    var copy = JSON.parse(JSON.stringify(src));
+    copy.id = uid();
+    copy.date = todayISO(0);
+    copy.isSample = false;
+    state.entries.push(copy);
+    maybeClearSampleAfterRealEntry();
+    save(state); renderAll();
+    toast("Logged — same as yesterday.");
+  });
+
+  document.getElementById("btnSkip").addEventListener("click", function(){
+    var d = todayISO(0);
+    if(state.entries.some(function(e){return e.date===d;})){
+      toast("Today's already logged.");
+      return;
+    }
+    state.entries.push({id:uid(), kind:"skip", date:d, isSample:false});
+    save(state); renderAll();
+    toast("No coffee today — streak kept.");
+  });
+
+  function maybeClearSampleAfterRealEntry(){
+    if(state.seenRealEntry) return;
+    state.seenRealEntry = true;
+    var hadSamples = state.entries.some(function(e){return e.isSample;});
+    if(hadSamples){
+      state.entries = state.entries.filter(function(e){return !e.isSample;});
+      toast("Sample cups cleared — this is your cupboard now.");
+    }
+  }
+
+  // ---------------- settings actions ----------------
+  document.getElementById("saveProfile").addEventListener("click", function(){
+    if(!state.profile) state.profile = {name:""};
+    state.profile.name = document.getElementById("profileName").value.trim().slice(0,24);
+    save(state);
+    renderTagline(); renderWrapped();
+    toast(state.profile.name ? ("Saved — hey, "+state.profile.name+" ☕") : "Name cleared.");
+  });
+  document.getElementById("saveBean").addEventListener("click", function(){
+    state.beanProfile = { bagPrice:Number(els.bagPrice.value)||0, cupsPerBag:Number(els.cupsPerBag.value)||1 };
+    save(state); renderSettings();
+    toast("Bean profile saved.");
+  });
+  document.getElementById("clearSample").addEventListener("click", function(){
+    var had = state.entries.some(function(e){return e.isSample;});
+    state.entries = state.entries.filter(function(e){return !e.isSample;});
+    save(state); renderAll();
+    toast(had? "Sample cups cleared." : "No sample cups to clear.");
+  });
+  els.hideAmount.addEventListener("change", function(){
+    state.hideAmount = els.hideAmount.checked; save(state); renderWrapped();
+  });
+
+  // ---------------- export / import ----------------
+  var dataOverlay = document.getElementById("dataOverlay");
+  var dataMode = "export";
+  document.getElementById("btnExport").addEventListener("click", function(){
+    dataMode="export";
+    document.getElementById("dataModalTitle").textContent="Export data";
+    document.getElementById("dataModalDesc").textContent="Copy this and save it somewhere safe. Paste it back in via Import to restore.";
+    els.dataArea = document.getElementById("dataArea");
+    document.getElementById("dataArea").readOnly = true;
+    document.getElementById("dataArea").value = JSON.stringify(state, null, 2);
+    document.getElementById("dataSecondary").textContent = "Copy to clipboard";
+    document.getElementById("dataSecondary").style.display="inline-flex";
+    dataOverlay.classList.add("open");
+  });
+  document.getElementById("btnImport").addEventListener("click", function(){
+    dataMode="import";
+    document.getElementById("dataModalTitle").textContent="Import data";
+    document.getElementById("dataModalDesc").textContent="Paste a previously exported backup below, then Import.";
+    document.getElementById("dataArea").readOnly = false;
+    document.getElementById("dataArea").value = "";
+    document.getElementById("dataSecondary").textContent = "Import";
+    document.getElementById("dataSecondary").style.display="inline-flex";
+    dataOverlay.classList.add("open");
+  });
+  document.getElementById("closeData").addEventListener("click", function(){ dataOverlay.classList.remove("open"); });
+  document.getElementById("dataPrimary").addEventListener("click", function(){ dataOverlay.classList.remove("open"); });
+  document.getElementById("dataSecondary").addEventListener("click", function(){
+    if(dataMode==="export"){
+      var ta = document.getElementById("dataArea");
+      ta.select();
+      try{ navigator.clipboard.writeText(ta.value); toast("Copied to clipboard."); }
+      catch(e){ toast("Couldn't auto-copy — text is selected, press Ctrl/Cmd+C."); }
+    } else {
+      try{
+        var parsed = JSON.parse(document.getElementById("dataArea").value);
+        if(!parsed.entries || !Array.isArray(parsed.entries)) throw new Error("bad shape");
+        state = parsed;
+        save(state); renderAll();
+        toast("Data imported.");
+        dataOverlay.classList.remove("open");
+      }catch(e){ toast("That didn't look like a valid backup."); }
+    }
+  });
+
+  // ---------------- streak modal ----------------
+  function dayStatus(iso){
+    var hasReal = realEntries().some(function(e){return e.date===iso;});
+    if(hasReal) return "real";
+    var hasSkip = state.entries.some(function(e){return e.date===iso && e.kind==="skip";});
+    if(hasSkip) return "skip";
+    if((state.freezeDates||[]).indexOf(iso)>-1) return "freeze";
+    return "none";
+  }
+  function renderStreakModal(){
+    var s = computeStats();
+    document.getElementById("streakModalCount").textContent = s.streak;
+    document.getElementById("streakBest").textContent = s.bestStreak + " days";
+    document.getElementById("streakFreezeCount").textContent = state.freezeBank||0;
+    var week = document.getElementById("streakWeek");
+    var html = "";
+    var todayIsoV = todayISO(0);
+    for(var i=6;i>=0;i--){
+      var d = new Date(); d.setDate(d.getDate()-i);
+      var iso = d.toISOString().slice(0,10);
+      var status = dayStatus(iso);
+      var label = d.toLocaleDateString("en-PH",{weekday:"narrow"});
+      var isToday = iso===todayIsoV;
+      var bg = status==="real" ? "var(--amber)" : (status==="skip" ? "var(--sage)" : "var(--surface-2)");
+      var bd = status==="freeze" ? "2px dashed var(--amber)" : (isToday ? "2px solid var(--ink)" : "1px solid var(--line)");
+      html += '<div style="display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;">' +
+        '<div style="width:30px;height:30px;border-radius:50%;background:'+bg+';border:'+bd+';"></div>' +
+        '<span style="font-size:10.5px;color:var(--ink-faint);">'+label+'</span></div>';
+    }
+    week.innerHTML = html;
+
+    var streakBadges = BADGES.filter(function(b){return b.group==="Streaks";});
+    var next = streakBadges.filter(function(b){return s.bestStreak < b.need;})[0];
+    var nextEl = document.getElementById("streakNext");
+    if(next){
+      var pct = Math.min(100, Math.round(100*s.streak/next.need));
+      nextEl.innerHTML = '<div class="hint" style="margin-bottom:5px;">'+Math.max(0,next.need-s.streak)+' more day(s) to <strong style="color:var(--ink);">'+next.name+'</strong></div>' +
+        '<div class="bprogress"><div style="width:'+pct+'%"></div></div>';
+    } else {
+      nextEl.innerHTML = '<div class="hint">You&rsquo;ve earned every streak title. Impressive.</div>';
+    }
+  }
+  document.getElementById("streakPill").addEventListener("click", function(){
+    renderStreakModal();
+    document.getElementById("streakOverlay").classList.add("open");
+  });
+  document.getElementById("closeStreak").addEventListener("click", function(){
+    document.getElementById("streakOverlay").classList.remove("open");
+  });
+
+  // ---------------- rain checks (streak freeze) ----------------
+  function ensureFreezeFields(){
+    if(state.freezeBank==null) state.freezeBank=0;
+    if(!state.freezeDates) state.freezeDates=[];
+    if(state.freezeMilestone==null) state.freezeMilestone=0;
+  }
+  function reconcileFreezes(){
+    ensureFreezeFields();
+    var loggedSet = {};
+    state.entries.forEach(function(e){ loggedSet[e.date]=true; });
+    state.freezeDates.forEach(function(d){ loggedSet[d]=true; });
+    var allKnownDates = Object.keys(loggedSet).sort();
+    if(allKnownDates.length<2) return;
+    var cursor = new Date(allKnownDates[0]+"T00:00:00");
+    var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1); yesterday.setHours(0,0,0,0);
+    var newFreezeUses = [];
+    var guard = 0;
+    while(cursor<=yesterday && guard<3650){
+      guard++;
+      var iso = cursor.toISOString().slice(0,10);
+      if(!loggedSet[iso] && state.freezeBank>0){
+        state.freezeBank--;
+        state.freezeDates.push(iso);
+        loggedSet[iso]=true;
+        newFreezeUses.push(iso);
+      }
+      cursor.setDate(cursor.getDate()+1);
+    }
+    var s = computeStats();
+    var awarded=false;
+    while(s.bestStreak >= state.freezeMilestone+7){
+      state.freezeMilestone+=7;
+      state.freezeBank+=1;
+      awarded=true;
+    }
+    if(newFreezeUses.length || awarded) save(state);
+    newFreezeUses.forEach(function(iso){ toast("Used a rain check for "+fmtDate(iso)+" — streak stayed alive."); });
+    if(awarded) toast("Rain check earned — "+state.freezeBank+" saved up.");
+  }
+
+  // ---------------- insights ----------------
+  function computeInsights(){
+    var real = realEntries();
+    var flavorCounts = {};
+    real.forEach(function(e){ (e.flavors||[]).forEach(function(f){ flavorCounts[f]=(flavorCounts[f]||0)+1; }); });
+    var flavorList = Object.keys(flavorCounts).map(function(f){ return {name:f, count:flavorCounts[f]}; }).sort(function(a,b){ return b.count-a.count; });
+
+    var priced = real.filter(function(e){ return !e.free && e.price>0 && e.rating>0; });
+    var bestValue=null, bestRatio=-1;
+    priced.forEach(function(e){ var ratio=e.rating/e.price; if(ratio>bestRatio){ bestRatio=ratio; bestValue=e; } });
+
+    var roasted = real.filter(function(e){ return e.roast; }).slice().sort(function(a,b){ return a.date<b.date?1:-1; });
+    var recent = roasted.slice(0,10), older = roasted.slice(10);
+    function roastMode(list){
+      var c={light:0,medium:0,dark:0};
+      list.forEach(function(e){ c[e.roast]=(c[e.roast]||0)+1; });
+      var top=null,max=0;
+      Object.keys(c).forEach(function(k){ if(c[k]>max){ max=c[k]; top=k; } });
+      return max>0?top:null;
+    }
+    return {
+      flavorList:flavorList, bestValue:bestValue,
+      recentRoast:roastMode(recent), olderRoast:roastMode(older),
+      roastedCount:roasted.length
+    };
+  }
+  var ROAST_LABEL = {light:"light roast", medium:"medium roast", dark:"dark roast"};
+  function renderInsights(){
+    var ins = computeInsights();
+    var html = "";
+    html += '<h3 style="margin-top:0;">Flavor profile</h3>';
+    if(ins.flavorList.length===0){
+      html += '<p class="desc">Tag a flavor note or two next time you log a cup, and your profile will take shape here.</p>';
+    } else {
+      var max = ins.flavorList[0].count;
+      html += '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:6px;">';
+      ins.flavorList.slice(0,6).forEach(function(f){
+        var pct = Math.round(100*f.count/max);
+        html += '<div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;"><span>'+f.name+'</span><span class="mono" style="color:var(--ink-soft);">'+f.count+'</span></div>' +
+          '<div class="bprogress" style="margin-top:0;"><div style="width:'+pct+'%"></div></div></div>';
+      });
+      html += '</div>';
+    }
+
+    html += '<h3 style="margin-bottom:4px;">Best value cup</h3>';
+    if(ins.bestValue){
+      var bv = ins.bestValue;
+      var label = bv.kind==="home" ? bv.method : (bv.venueName||"Away");
+      html += '<p class="desc" style="margin-bottom:0;">'+escapeHtml(label)+' — '+bv.rating+' beans for '+peso(bv.price)+', on '+fmtDate(bv.date)+'.</p>';
+    } else {
+      html += '<p class="desc" style="margin-bottom:0;">Rate a few priced cups and your best-value pick will show up here.</p>';
+    }
+
+    html += '<h3 style="margin:16px 0 4px;">Roast trend</h3>';
+    if(ins.roastedCount<3){
+      html += '<p class="desc" style="margin-bottom:0;">Log a few more roast levels to see whether your taste is drifting lighter or darker.</p>';
+    } else if(ins.recentRoast && ins.olderRoast && ins.recentRoast!==ins.olderRoast){
+      html += '<p class="desc" style="margin-bottom:0;">Lately you\'ve been leaning <strong style="color:var(--ink);">'+ROAST_LABEL[ins.recentRoast]+'</strong>, a shift from '+ROAST_LABEL[ins.olderRoast]+' before.</p>';
+    } else if(ins.recentRoast){
+      html += '<p class="desc" style="margin-bottom:0;">Steady preference for <strong style="color:var(--ink);">'+ROAST_LABEL[ins.recentRoast]+'</strong> — no drift yet.</p>';
+    } else {
+      html += '<p class="desc" style="margin-bottom:0;">Not enough roast data yet.</p>';
+    }
+    document.getElementById("insightsPanel").innerHTML = html;
+  }
+
+  // ---------------- widget concept ----------------
+  function renderWidgetMock(){
+    var s = computeStats();
+    var todayCount = realEntries().filter(function(e){ return e.date===todayISO(0); }).length;
+    document.getElementById("widgetMock").innerHTML =
+      '<div style="background:linear-gradient(160deg,#3C2A1E,#241609);color:#F3E7D6;border-radius:20px;padding:16px;box-shadow:var(--shadow);">' +
+      '<div style="font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.08em;">Tasa</div>' +
+      '<div class="mono" style="font-family:Fraunces,serif;font-size:24px;font-weight:600;margin:4px 0;">'+todayCount+' cup'+(todayCount===1?'':'s')+' today</div>' +
+      '<div style="font-size:13px;opacity:.85;">☕ '+s.streak+'-day streak</div>' +
+      '</div>';
+  }
+
+  // ---------------- share wrapped ----------------
+  document.getElementById("btnShareWrapped").addEventListener("click", function(){
+    var s = computeStats();
+    var hide = state.hideAmount;
+    var shareName = (state.profile && state.profile.name) ? state.profile.name.trim() : "";
+    var lines = [
+      (shareName? shareName+"’s coffee month on Tasa ☕" : "My coffee month on Tasa ☕"),
+      hide ? "Spend: kept private" : ("Spend: "+peso(s.monthSpend)),
+      "Cups: "+s.monthEntryCount+" ("+countThisMonthByKind("home")+" home, "+countThisMonthByKind("away")+" away)",
+      s.topCafe ? ("Top café: "+s.topCafe) : null,
+      s.topMethod ? ("Go-to method: "+s.topMethod) : null,
+      "Longest streak: "+s.bestStreak+" days"
+    ].filter(Boolean);
+    var text = lines.join("\n");
+    if(navigator.share){
+      navigator.share({text:text, title:"My Tasa Wrapped"}).catch(function(){});
+    } else {
+      try{
+        navigator.clipboard.writeText(text);
+        toast("Copied your Wrapped summary — paste it anywhere.");
+      }catch(e){
+        toast("Couldn't share automatically — screenshot the card instead.");
+      }
+    }
+  });
+
+  // ---------------- init ----------------
+  renderAll();
+})();
+</script>
