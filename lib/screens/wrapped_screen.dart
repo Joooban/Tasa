@@ -10,6 +10,7 @@ import '../providers/services_providers.dart';
 import '../theme/app_colors.dart';
 import '../widgets/spend_trend_chart.dart';
 import '../widgets/wrapped_card.dart';
+import 'cafe_leaderboard_screen.dart';
 
 enum _WrappedPeriod { month, year }
 
@@ -93,6 +94,15 @@ class _WrappedScreenState extends ConsumerState<WrappedScreen> {
             onPressed: _sharing ? null : _share,
             icon: const Icon(Icons.share_outlined, size: 16),
             label: Text(_sharing ? 'Preparing…' : 'Share'),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Center(
+          child: TextButton(
+            onPressed: () => Navigator.of(context).push<void>(
+              MaterialPageRoute(builder: (_) => const CafeLeaderboardScreen()),
+            ),
+            child: const Text('See full café leaderboard →'),
           ),
         ),
         const SizedBox(height: 24),
