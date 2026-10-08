@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../logic/date_utils.dart';
 import '../logic/sample_data.dart';
 import '../logic/streak.dart';
+import '../logic/usual_entry.dart';
 import '../models/entry.dart';
 import '../models/profile.dart';
 import 'services_providers.dart';
@@ -190,6 +191,21 @@ class CupboardController extends AsyncNotifier<CupboardState> {
     );
     await saveEntry(copy, isNew: true);
     return 'Logged — same as yesterday.';
+  }
+
+  Future<String> logUsual() async {
+    final usual = usualEntry(_current.entries);
+    if (usual == null) {
+      return 'Log a few more cups first, then your usual will show up here.';
+    }
+    final copy = usual.copyWith(
+      id: Entry.newId(),
+      date: todayDate(),
+      isSample: false,
+    );
+    await saveEntry(copy, isNew: true);
+    final label = copy.kind == EntryKind.home ? copy.method : copy.venueName;
+    return 'Logged your usual — ${label ?? 'cup'}.';
   }
 
   Future<String> skipToday() async {

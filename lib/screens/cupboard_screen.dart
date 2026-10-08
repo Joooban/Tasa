@@ -78,6 +78,17 @@ class CupboardScreen extends ConsumerWidget {
                       ),
                       child: const Text('No coffee today', style: TextStyle(fontSize: 12.5)),
                     ),
+                    const SizedBox(width: 8),
+                    OutlinedButton(
+                      onPressed: () async {
+                        final msg = await ref.read(cupboardControllerProvider.notifier).logUsual();
+                        if (context.mounted) _toast(context, msg);
+                      },
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                      child: const Text('Log my usual', style: TextStyle(fontSize: 12.5)),
+                    ),
                   ],
                 ),
               ],
