@@ -315,6 +315,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             child: const Text('Send feedback'),
           ),
         ),
+        _panel(
+          c,
+          title: 'Support Tasa',
+          desc: 'Tasa is free, with no ads and no accounts. If it\'s useful to you, a small '
+              'tip helps keep it going.',
+          child: OutlinedButton(
+            onPressed: () async {
+              final uri = Uri.parse('https://ko-fi.com/jobaaaan');
+              bool launched;
+              try {
+                launched = await launchUrl(uri);
+              } catch (_) {
+                launched = false;
+              }
+              if (!launched && context.mounted) {
+                _toast(context, 'Could not open the link — find us at ko-fi.com/jobaaaan');
+              }
+            },
+            child: const Text('Support Tasa ☕'),
+          ),
+        ),
         Consumer(
           builder: (context, ref, _) {
             final versionAsync = ref.watch(versionInfoProvider);
