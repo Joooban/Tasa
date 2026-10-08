@@ -4,6 +4,7 @@ import '../logic/badges.dart';
 import '../logic/constants.dart';
 import '../logic/insights.dart';
 import '../logic/on_this_day.dart';
+import '../logic/spend_trend.dart';
 import '../logic/stats.dart';
 import '../models/entry.dart';
 import '../models/stats.dart';
@@ -53,6 +54,12 @@ final onThisDayProvider = Provider<List<Entry>>((ref) {
   final s = ref.watch(cupboardControllerProvider).valueOrNull;
   if (s == null) return const [];
   return onThisDay(s.entries);
+});
+
+final spendTrendProvider = Provider<List<MonthSpend>>((ref) {
+  final s = ref.watch(cupboardControllerProvider).valueOrNull;
+  if (s == null) return const [];
+  return monthlySpendTrend(s.entries);
 });
 
 /// The built-in flavor tags plus any custom ones the user has typed before —

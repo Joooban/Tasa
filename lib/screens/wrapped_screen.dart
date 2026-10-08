@@ -8,6 +8,7 @@ import '../providers/cupboard_controller.dart';
 import '../providers/derived_providers.dart';
 import '../providers/services_providers.dart';
 import '../theme/app_colors.dart';
+import '../widgets/spend_trend_chart.dart';
 import '../widgets/wrapped_card.dart';
 
 enum _WrappedPeriod { month, year }
@@ -163,6 +164,20 @@ class _WrappedScreenState extends ConsumerState<WrappedScreen> {
               Text(_roastTrendText(insights), style: TextStyle(fontSize: 13, color: c.inkSoft)),
             ],
           ),
+        ),
+        const SizedBox(height: 24),
+        Text('SPEND, LAST 6 MONTHS',
+            style: TextStyle(
+                fontSize: 13, letterSpacing: 1, color: c.inkSoft, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: c.surface,
+            border: Border.all(color: c.line),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: SpendTrendChart(months: ref.watch(spendTrendProvider)),
         ),
       ],
     );
