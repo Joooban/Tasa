@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../logic/badges.dart';
 import '../logic/constants.dart';
 import '../logic/insights.dart';
+import '../logic/on_this_day.dart';
 import '../logic/stats.dart';
 import '../models/entry.dart';
 import '../models/stats.dart';
@@ -45,6 +46,13 @@ final venueNamesProvider = Provider<List<String>>((ref) {
     }
   }
   return names.toList()..sort();
+});
+
+/// Real entries from exactly this calendar date in an earlier year.
+final onThisDayProvider = Provider<List<Entry>>((ref) {
+  final s = ref.watch(cupboardControllerProvider).valueOrNull;
+  if (s == null) return const [];
+  return onThisDay(s.entries);
 });
 
 /// The built-in flavor tags plus any custom ones the user has typed before —

@@ -7,6 +7,7 @@ import '../providers/derived_providers.dart';
 import '../theme/app_colors.dart';
 import '../widgets/delete_with_undo.dart';
 import '../widgets/entry_card.dart';
+import '../widgets/on_this_day_banner.dart';
 import 'entry_detail_screen.dart';
 import 'entry_form_sheet.dart';
 
@@ -80,6 +81,14 @@ class CupboardScreen extends ConsumerWidget {
                   ],
                 ),
               ],
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: OnThisDayBanner(
+            memories: ref.watch(onThisDayProvider),
+            onTap: (e) => Navigator.of(context).push<void>(
+              MaterialPageRoute(builder: (_) => EntryDetailScreen(entryId: e.id)),
             ),
           ),
         ),
