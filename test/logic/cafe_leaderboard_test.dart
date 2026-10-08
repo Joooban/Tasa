@@ -56,4 +56,22 @@ void main() {
     ];
     expect(cafeLeaderboard(entries), isEmpty);
   });
+
+  test('breaks a visit-count tie by higher total spend', () {
+    final entries = [
+      cafeVisit('Wildflour', price: 100),
+      cafeVisit('Yardstick', price: 200),
+    ];
+    final ranking = cafeLeaderboard(entries);
+    expect(ranking.first.name, 'Yardstick');
+  });
+
+  test('breaks a visit-count and spend tie alphabetically by name', () {
+    final entries = [
+      cafeVisit('Wildflour', price: 100),
+      cafeVisit('Arcafé', price: 100),
+    ];
+    final ranking = cafeLeaderboard(entries);
+    expect(ranking.first.name, 'Arcafé');
+  });
 }

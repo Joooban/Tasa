@@ -325,7 +325,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               final uri = Uri.parse('https://ko-fi.com/jobaaaan');
               bool launched;
               try {
-                launched = await launchUrl(uri);
+                launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
               } catch (_) {
                 launched = false;
               }

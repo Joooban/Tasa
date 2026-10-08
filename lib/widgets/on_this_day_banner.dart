@@ -40,36 +40,43 @@ class _OnThisDayBannerState extends State<OnThisDayBanner> {
         border: Border.all(color: c.amber.withValues(alpha: 0.4)),
         borderRadius: BorderRadius.circular(14),
       ),
-      child: InkWell(
-        onTap: () => widget.onTap(memory),
-        borderRadius: BorderRadius.circular(10),
-        child: Row(
-          children: [
-            BeanIcon(size: 28, color: c.amberInk),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('On this day, $yearsLabel',
-                      style: TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.w700, color: c.amberInk)),
-                  const SizedBox(height: 2),
-                  Text('$title · ${fmtShortDate(memory.date)}',
-                      style: TextStyle(fontSize: 13, color: c.ink)),
-                  if (widget.memories.length > 1)
-                    Text('+${widget.memories.length - 1} more year(s)',
-                        style: TextStyle(fontSize: 11, color: c.inkFaint)),
-                ],
+      // Material(transparency) gives the tile a proper ink-painting ancestor —
+      // without it, its splash paints onto whichever distant Material
+      // ancestor InkWell finds instead, underneath this Container's own
+      // decoration, and never becomes visible (same fix as settings_screen.dart).
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: () => widget.onTap(memory),
+          borderRadius: BorderRadius.circular(10),
+          child: Row(
+            children: [
+              BeanIcon(size: 28, color: c.amberInk),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('On this day, $yearsLabel',
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.w700, color: c.amberInk)),
+                    const SizedBox(height: 2),
+                    Text('$title · ${fmtShortDate(memory.date)}',
+                        style: TextStyle(fontSize: 13, color: c.ink)),
+                    if (widget.memories.length > 1)
+                      Text('+${widget.memories.length - 1} more year(s)',
+                          style: TextStyle(fontSize: 11, color: c.inkFaint)),
+                  ],
+                ),
               ),
-            ),
-            IconButton(
-              icon: Icon(Icons.close, size: 18, color: c.inkFaint),
-              onPressed: () => setState(() => _dismissed = true),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
-          ],
+              IconButton(
+                icon: Icon(Icons.close, size: 18, color: c.inkFaint),
+                onPressed: () => setState(() => _dismissed = true),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+            ],
+          ),
         ),
       ),
     );

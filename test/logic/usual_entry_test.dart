@@ -50,8 +50,19 @@ void main() {
         method: 'Pour-over (V60)',
         isSample: true,
       ),
+      Entry.skip(date: DateTime(2026, 1, 4)),
     ];
     expect(usualEntry(entries), isNull);
+  });
+
+  test('picks the most frequent combo even when a less-frequent one is more recent', () {
+    final entries = [
+      home(DateTime(2026, 1, 1), 'Pour-over (V60)'),
+      home(DateTime(2026, 1, 2), 'Pour-over (V60)'),
+      home(DateTime(2026, 1, 3), 'Pour-over (V60)'),
+      home(DateTime(2026, 1, 10), 'Chemex'),
+    ];
+    expect(usualEntry(entries)?.method, 'Pour-over (V60)');
   });
 
   group('repeatableUsualCopy', () {

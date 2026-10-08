@@ -53,43 +53,7 @@ class CupboardScreen extends ConsumerWidget {
                     _filterChip(context, ref, 'Away', CupboardFilter.away),
                   ],
                 ),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    OutlinedButton(
-                      onPressed: () async {
-                        final msg =
-                            await ref.read(cupboardControllerProvider.notifier).repeatYesterday();
-                        if (context.mounted) _toast(context, msg);
-                      },
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      child: const Text('Repeat yesterday', style: TextStyle(fontSize: 12.5)),
-                    ),
-                    OutlinedButton(
-                      onPressed: () async {
-                        final msg = await ref.read(cupboardControllerProvider.notifier).skipToday();
-                        if (context.mounted) _toast(context, msg);
-                      },
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      child: const Text('No coffee today', style: TextStyle(fontSize: 12.5)),
-                    ),
-                    OutlinedButton(
-                      onPressed: () async {
-                        final msg = await ref.read(cupboardControllerProvider.notifier).logUsual();
-                        if (context.mounted) _toast(context, msg);
-                      },
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      child: const Text('Log my usual', style: TextStyle(fontSize: 12.5)),
-                    ),
-                  ],
-                ),
+                const _QuickActions(),
               ],
             ),
           ),
@@ -169,7 +133,65 @@ class CupboardScreen extends ConsumerWidget {
     );
   }
 
-  void _toast(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+}
+
+void _toast(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+}
+
+/// The three quick-repeat buttons, isolated so an in-flight tap can disable
+/// all three — without this guard a double-tap (or a slow DB write) could
+/// log the same action twice before the UI catches up.
+class _QuickActions extends ConsumerStatefulWidget {
+  const _QuickActions();
+
+  @override
+  ConsumerState<_QuickActions> createState() => _QuickActionsState();
+}
+
+class _QuickActionsState extends ConsumerState<_QuickActions> {
+  bool _busy = false;
+
+  Future<void> _run(Future<String> Function() action) async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      final msg = await action();
+      if (mounted) _toast(context, msg);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final notifier = ref.read(cupboardControllerProvider.notifier);
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        OutlinedButton(
+          onPressed: _busy ? null : () => _run(notifier.repeatYesterday),
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+          child: const Text('Repeat yesterday', style: TextStyle(fontSize: 12.5)),
+        ),
+        OutlinedButton(
+          onPressed: _busy ? null : () => _run(notifier.skipToday),
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+          child: const Text('No coffee today', style: TextStyle(fontSize: 12.5)),
+        ),
+        OutlinedButton(
+          onPressed: _busy ? null : () => _run(notifier.logUsual),
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+          child: const Text('Log my usual', style: TextStyle(fontSize: 12.5)),
+        ),
+      ],
+    );
   }
 }

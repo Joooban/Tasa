@@ -134,4 +134,19 @@ void main() {
     expect(stats.yearEntryCount, 1);
     expect(stats.yearSpend, 50);
   });
+
+  test('year totals exclude skip entries and entries from a future year', () {
+    final entries = [
+      home(date: DateTime(2026, 1, 10), price: 50),
+      Entry.skip(date: DateTime(2026, 2, 1)),
+      home(date: DateTime(2027, 1, 1), price: 999), // future year — excluded
+    ];
+    final stats = computeStats(
+      entries: entries,
+      beanProfile: const BeanProfile(),
+      now: DateTime(2026, 3, 15),
+    );
+    expect(stats.yearEntryCount, 1);
+    expect(stats.yearSpend, 50);
+  });
 }

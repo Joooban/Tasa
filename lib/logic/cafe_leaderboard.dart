@@ -42,6 +42,12 @@ List<CafeRanking> cafeLeaderboard(List<Entry> entries) {
     );
   }).toList();
 
-  rankings.sort((a, b) => b.visitCount.compareTo(a.visitCount));
+  rankings.sort((a, b) {
+    final byVisits = b.visitCount.compareTo(a.visitCount);
+    if (byVisits != 0) return byVisits;
+    final bySpend = b.totalSpend.compareTo(a.totalSpend);
+    if (bySpend != 0) return bySpend;
+    return a.name.compareTo(b.name);
+  });
   return rankings;
 }

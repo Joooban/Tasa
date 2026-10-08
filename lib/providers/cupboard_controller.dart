@@ -301,6 +301,25 @@ class CupboardController extends AsyncNotifier<CupboardState> {
   Future<void> reloadFromDatabase() async {
     ref.invalidateSelf();
     await future;
+    // The restored settings may enable the reminder, or carry a different
+    // hour/minute than whatever the OS currently has scheduled — without
+    // this, the Settings screen would show the restored time while the
+    // actual alarm stays on the pre-restore one. Best-effort: a failure
+    // here shouldn't block the restore itself.
+    try {
+      final settings = _current.settings;
+      final notifier = ref.read(notificationServiceProvider);
+      if (settings.notificationsEnabled) {
+        await notifier.scheduleDailyReminder(
+          hour: settings.reminderHour,
+          minute: settings.reminderMinute,
+        );
+      } else {
+        await notifier.cancelDailyReminder();
+      }
+    } catch (_) {
+      // Best-effort — the restore itself already succeeded.
+    }
   }
 }
 

@@ -64,15 +64,23 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
         padding: const EdgeInsets.all(16),
         child: RepaintBoundary(
           key: _boundaryKey,
-          child: EntryCard(
-            entry: entry,
-            hideAmount: cupboard?.settings.hideAmount ?? false,
-            onEdit: () => showEntryForm(context, existing: entry),
-            // No explicit pop here — deleting flips `entry` to null above on the
-            // next rebuild, which already pops. A second pop call racing that
-            // one (mid exit-transition) is exactly the kind of thing that trips
-            // Navigator/Element assertions, so there's deliberately only one path.
-            onDelete: () => deleteEntryWithUndo(context, ref, entry.id),
+          // A solid background behind the card, captured as part of the same
+          // boundary — without it, the Card's margin and rounded corners
+          // leave transparent pixels in the shared PNG, which some share
+          // targets render as black instead of the app's cream background.
+          child: Container(
+            color: c.bg,
+            padding: const EdgeInsets.all(4),
+            child: EntryCard(
+              entry: entry,
+              hideAmount: cupboard?.settings.hideAmount ?? false,
+              onEdit: () => showEntryForm(context, existing: entry),
+              // No explicit pop here — deleting flips `entry` to null above on the
+              // next rebuild, which already pops. A second pop call racing that
+              // one (mid exit-transition) is exactly the kind of thing that trips
+              // Navigator/Element assertions, so there's deliberately only one path.
+              onDelete: () => deleteEntryWithUndo(context, ref, entry.id),
+            ),
           ),
         ),
       ),

@@ -52,6 +52,9 @@ class SpendTrendChart extends StatelessWidget {
     );
   }
 
+  // A year marker only on January avoids repeating it on every bar while
+  // still disambiguating a Dec→Jan crossing — the one point where two
+  // adjacent bars would otherwise read as the same month.
   String _monthLabel(DateTime d) =>
-      const ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][d.month - 1];
+      d.month == 1 ? "${fmtMonthShort(d)} '${(d.year % 100).toString().padLeft(2, '0')}" : fmtMonthShort(d);
 }
