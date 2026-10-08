@@ -9,28 +9,35 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 /// Real OS share sheet — the native build's replacement for the prototype's
-/// clipboard/`navigator.share` fallback. Wrapped renders as an actual shareable
-/// image captured from the on-screen card.
+/// clipboard/`navigator.share` fallback. Any shared card renders as an
+/// actual image captured from the on-screen widget via its RepaintBoundary.
 class ShareService {
   Future<void> shareWrappedCard({
     required GlobalKey boundaryKey,
     required String fallbackText,
+  }) =>
+      shareImage(boundaryKey: boundaryKey, fallbackText: fallbackText, subject: 'My Tasa Wrapped');
+
+  Future<void> shareImage({
+    required GlobalKey boundaryKey,
+    required String fallbackText,
+    required String subject,
   }) async {
     final bytes = await _captureBoundary(boundaryKey);
     if (bytes == null) {
       await SharePlus.instance.share(
-        ShareParams(text: fallbackText, subject: 'My Tasa Wrapped'),
+        ShareParams(text: fallbackText, subject: subject),
       );
       return;
     }
 
     final dir = await getTemporaryDirectory();
-    final path = p.join(dir.path, 'tasa-wrapped-${DateTime.now().microsecondsSinceEpoch}.png');
+    final path = p.join(dir.path, 'tasa-share-${DateTime.now().microsecondsSinceEpoch}.png');
     final file = File(path);
     await file.writeAsBytes(bytes);
 
     await SharePlus.instance.share(
-      ShareParams(files: [XFile(path)], text: fallbackText, subject: 'My Tasa Wrapped'),
+      ShareParams(files: [XFile(path)], text: fallbackText, subject: subject),
     );
   }
 
