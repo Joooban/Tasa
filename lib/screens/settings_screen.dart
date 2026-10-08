@@ -174,41 +174,83 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           // DecoratedBox instead and Flutter flags it as invisible.
           child: Material(
             type: MaterialType.transparency,
-            child: SwitchListTile(
-              value: state.settings.notificationsEnabled,
-              onChanged: (v) async {
-                final notifier = ref.read(cupboardControllerProvider.notifier);
-                if (v) {
-                  bool granted;
-                  try {
-                    granted = await ref.read(notificationServiceProvider).requestPermission();
-                  } catch (_) {
-                    granted = false;
-                  }
-                  if (!granted) {
-                    if (context.mounted) _toast(context, "Notifications weren't allowed — you can turn this on later from system settings.");
-                    return;
-                  }
-                }
-                // Scheduling/cancelling the OS-level reminder is best-effort — if the
-                // plugin throws for any reason, the switch must still flip and save,
-                // or it looks permanently stuck (can't be turned back off) instead of
-                // just quietly not having a reminder scheduled.
-                try {
-                  if (v) {
-                    await ref.read(notificationServiceProvider).scheduleDailyReminder();
-                  } else {
-                    await ref.read(notificationServiceProvider).cancelDailyReminder();
-                  }
-                } catch (_) {
-                  if (context.mounted) {
-                    _toast(context, "Saved, but couldn't reach the system notification service — try again if reminders don't behave.");
-                  }
-                }
-                await notifier.setNotificationsEnabled(v);
-              },
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Remind me once a day', style: TextStyle(fontSize: 13.5)),
+            child: Column(
+              children: [
+                SwitchListTile(
+                  value: state.settings.notificationsEnabled,
+                  onChanged: (v) async {
+                    final notifier = ref.read(cupboardControllerProvider.notifier);
+                    if (v) {
+                      bool granted;
+                      try {
+                        granted = await ref.read(notificationServiceProvider).requestPermission();
+                      } catch (_) {
+                        granted = false;
+                      }
+                      if (!granted) {
+                        if (context.mounted) _toast(context, "Notifications weren't allowed — you can turn this on later from system settings.");
+                        return;
+                      }
+                    }
+                    // Scheduling/cancelling the OS-level reminder is best-effort — if the
+                    // plugin throws for any reason, the switch must still flip and save,
+                    // or it looks permanently stuck (can't be turned back off) instead of
+                    // just quietly not having a reminder scheduled.
+                    try {
+                      if (v) {
+                        await ref.read(notificationServiceProvider).scheduleDailyReminder(
+                              hour: state.settings.reminderHour,
+                              minute: state.settings.reminderMinute,
+                            );
+                      } else {
+                        await ref.read(notificationServiceProvider).cancelDailyReminder();
+                      }
+                    } catch (_) {
+                      if (context.mounted) {
+                        _toast(context, "Saved, but couldn't reach the system notification service — try again if reminders don't behave.");
+                      }
+                    }
+                    await notifier.setNotificationsEnabled(v);
+                  },
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Remind me once a day', style: TextStyle(fontSize: 13.5)),
+                ),
+                if (state.settings.notificationsEnabled)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Reminder time', style: TextStyle(fontSize: 13.5)),
+                    trailing: TextButton(
+                      onPressed: () async {
+                        final picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay(
+                            hour: state.settings.reminderHour,
+                            minute: state.settings.reminderMinute,
+                          ),
+                        );
+                        if (picked == null) return;
+                        await ref
+                            .read(cupboardControllerProvider.notifier)
+                            .setReminderTime(picked.hour, picked.minute);
+                        try {
+                          await ref
+                              .read(notificationServiceProvider)
+                              .scheduleDailyReminder(hour: picked.hour, minute: picked.minute);
+                        } catch (_) {
+                          if (context.mounted) {
+                            _toast(context, "Saved, but couldn't reach the system notification service.");
+                          }
+                        }
+                      },
+                      child: Text(
+                        TimeOfDay(
+                          hour: state.settings.reminderHour,
+                          minute: state.settings.reminderMinute,
+                        ).format(context),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         ),

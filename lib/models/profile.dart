@@ -61,6 +61,8 @@ class AppSettings {
   final bool notificationsEnabled;
   final bool hasOnboarded;
   final AppThemeMode themeMode;
+  final int reminderHour;
+  final int reminderMinute;
 
   const AppSettings({
     this.hideAmount = false,
@@ -70,6 +72,8 @@ class AppSettings {
     this.notificationsEnabled = false,
     this.hasOnboarded = false,
     this.themeMode = AppThemeMode.system,
+    this.reminderHour = 9,
+    this.reminderMinute = 0,
   });
 
   AppSettings copyWith({
@@ -80,6 +84,8 @@ class AppSettings {
     bool? notificationsEnabled,
     bool? hasOnboarded,
     AppThemeMode? themeMode,
+    int? reminderHour,
+    int? reminderMinute,
   }) =>
       AppSettings(
         hideAmount: hideAmount ?? this.hideAmount,
@@ -89,6 +95,8 @@ class AppSettings {
         notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
         hasOnboarded: hasOnboarded ?? this.hasOnboarded,
         themeMode: themeMode ?? this.themeMode,
+        reminderHour: reminderHour ?? this.reminderHour,
+        reminderMinute: reminderMinute ?? this.reminderMinute,
       );
 
   Map<String, Object?> toMap() => {
@@ -100,6 +108,8 @@ class AppSettings {
         'notifications_enabled': notificationsEnabled ? 1 : 0,
         'has_onboarded': hasOnboarded ? 1 : 0,
         'theme_mode': themeMode.id,
+        'reminder_hour': reminderHour,
+        'reminder_minute': reminderMinute,
       };
 
   factory AppSettings.fromMap(Map<String, Object?> m) => AppSettings(
@@ -110,5 +120,7 @@ class AppSettings {
         notificationsEnabled: (m['notifications_enabled'] as int? ?? 0) == 1,
         hasOnboarded: (m['has_onboarded'] as int? ?? 0) == 1,
         themeMode: AppThemeModeX.fromId(m['theme_mode'] as String?),
+        reminderHour: m['reminder_hour'] as int? ?? 9,
+        reminderMinute: m['reminder_minute'] as int? ?? 0,
       );
 }

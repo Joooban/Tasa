@@ -11,7 +11,7 @@ import '../models/profile.dart';
 
 /// Bump when the table shape changes, and add the migration to [_migrate].
 /// Every schema change ships with an explicit migration — never a silent one.
-const kDbSchemaVersion = 3;
+const kDbSchemaVersion = 4;
 
 const _dbFileName = 'tasa.db';
 
@@ -113,7 +113,9 @@ class DatabaseService {
         freeze_milestone INTEGER NOT NULL DEFAULT 0,
         notifications_enabled INTEGER NOT NULL DEFAULT 0,
         has_onboarded INTEGER NOT NULL DEFAULT 0,
-        theme_mode TEXT NOT NULL DEFAULT 'system'
+        theme_mode TEXT NOT NULL DEFAULT 'system',
+        reminder_hour INTEGER NOT NULL DEFAULT 9,
+        reminder_minute INTEGER NOT NULL DEFAULT 0
       )
     ''');
     await db.execute('''
@@ -134,6 +136,14 @@ class DatabaseService {
     if (oldVersion < 3) {
       await db.execute(
         "ALTER TABLE app_settings ADD COLUMN theme_mode TEXT NOT NULL DEFAULT 'system'",
+      );
+    }
+    if (oldVersion < 4) {
+      await db.execute(
+        'ALTER TABLE app_settings ADD COLUMN reminder_hour INTEGER NOT NULL DEFAULT 9',
+      );
+      await db.execute(
+        'ALTER TABLE app_settings ADD COLUMN reminder_minute INTEGER NOT NULL DEFAULT 0',
       );
     }
   }

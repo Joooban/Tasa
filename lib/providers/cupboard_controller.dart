@@ -294,6 +294,13 @@ class CupboardController extends AsyncNotifier<CupboardState> {
     state = AsyncData(_current.copyWith(settings: settings));
   }
 
+  Future<void> setReminderTime(int hour, int minute) async {
+    final settings = _current.settings.copyWith(reminderHour: hour, reminderMinute: minute);
+    final db = ref.read(databaseServiceProvider);
+    await db.saveAppSettings(settings);
+    state = AsyncData(_current.copyWith(settings: settings));
+  }
+
   /// Wipes and replaces everything from a validated backup, then reloads.
   Future<void> reloadFromDatabase() async {
     ref.invalidateSelf();
