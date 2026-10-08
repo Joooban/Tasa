@@ -1,5 +1,7 @@
 import 'package:uuid/uuid.dart';
 
+import '../logic/date_utils.dart' as date_utils;
+
 const _uuid = Uuid();
 
 /// Current schema version for stored [Entry] records.
@@ -110,7 +112,7 @@ class Entry {
 
   static String newId() => _uuid.v4();
 
-  static DateTime dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
+  static DateTime dateOnly(DateTime d) => date_utils.dateOnly(d);
 
   factory Entry.skip({required DateTime date}) => Entry(
         id: newId(),
@@ -210,6 +212,5 @@ class Entry {
     );
   }
 
-  String get dateIso =>
-      '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  String get dateIso => date_utils.isoDate(date);
 }

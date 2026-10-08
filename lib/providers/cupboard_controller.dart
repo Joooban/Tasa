@@ -126,6 +126,36 @@ class CupboardController extends AsyncNotifier<CupboardState> {
     }
     state = AsyncData(_current.copyWith(entries: entries));
     if (isNew) await _maybeClearSampleAfterRealEntry();
+    // A long-lived session (backgrounded/foregrounded, never cold-started)
+    // otherwise only ever reconciles Rain Checks once, at the provider's
+    // first build() — a milestone crossed mid-session would silently never
+    // get credited until the app restarts.
+    await _reconcileRainChecks();
+  }
+
+  /// Re-runs Rain Check reconciliation against the in-memory state and
+  /// persists/announces anything that changed. Safe to call after any
+  /// mutation that could cross a streak milestone or consume a freeze.
+  Future<void> _reconcileRainChecks() async {
+    final reconciled = reconcileRainChecks(
+      entries: _current.entries,
+      settings: _current.settings,
+      freezeDates: _current.freezeDates,
+    );
+    if (!reconciled.changed) return;
+    final db = ref.read(databaseServiceProvider);
+    await db.saveAppSettings(reconciled.settings);
+    await db.saveFreezeDates(reconciled.freezeDates);
+    state = AsyncData(_current.copyWith(
+      settings: reconciled.settings,
+      freezeDates: reconciled.freezeDates,
+    ));
+    for (final d in reconciled.newlyConsumedDates) {
+      _pushToast('Used a rain check for ${_fmt(d)} — streak stayed alive.');
+    }
+    if (reconciled.milestonesAwarded > 0) {
+      _pushToast('Rain check earned — ${_current.settings.freezeBank} saved up.');
+    }
   }
 
   Future<Entry?> deleteEntry(String id) async {
@@ -149,7 +179,7 @@ class CupboardController extends AsyncNotifier<CupboardState> {
   Future<String> repeatYesterday() async {
     final yesterday = offsetDate(todayDate(), -1);
     final candidates = _current.entries
-        .where((e) => e.kind != EntryKind.skip && isSameDate(e.date, yesterday))
+        .where((e) => e.kind != EntryKind.skip && !e.isSample && isSameDate(e.date, yesterday))
         .toList();
     if (candidates.isEmpty) return 'No cup logged yesterday to repeat.';
     final src = candidates.last;
@@ -164,12 +194,14 @@ class CupboardController extends AsyncNotifier<CupboardState> {
 
   Future<String> skipToday() async {
     final today = todayDate();
-    final alreadyLogged = _current.entries.any((e) => isSameDate(e.date, today));
+    final alreadyLogged =
+        _current.entries.any((e) => !e.isSample && isSameDate(e.date, today));
     if (alreadyLogged) return "Today's already logged.";
     final entry = Entry.skip(date: today);
     final db = ref.read(databaseServiceProvider);
     await db.upsertEntry(entry);
     state = AsyncData(_current.copyWith(entries: [..._current.entries, entry]));
+    await _reconcileRainChecks();
     return 'No coffee today — streak kept.';
   }
 

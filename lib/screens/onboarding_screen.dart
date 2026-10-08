@@ -30,7 +30,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Future<void> _finish() async {
     setState(() => _finishing = true);
-    await ref.read(cupboardControllerProvider.notifier).completeOnboarding(name: _nameCtrl.text);
+    try {
+      await ref.read(cupboardControllerProvider.notifier).completeOnboarding(name: _nameCtrl.text);
+    } catch (_) {
+      // On success this screen is replaced by RootShell and never rebuilds,
+      // so it's safe to always reset here — this path only runs on failure.
+      if (mounted) {
+        setState(() => _finishing = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Couldn't save — try again.")),
+        );
+      }
+    }
   }
 
   void _next() {

@@ -5,6 +5,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../logic/date_utils.dart';
 import '../models/entry.dart';
 import '../models/profile.dart';
 
@@ -211,10 +212,8 @@ class DatabaseService {
       await txn.delete('freeze_dates');
       final batch = txn.batch();
       for (final d in dates) {
-        batch.insert('freeze_dates', {
-          'date':
-              '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}'
-        }, conflictAlgorithm: ConflictAlgorithm.replace);
+        batch.insert('freeze_dates', {'date': isoDate(d)},
+            conflictAlgorithm: ConflictAlgorithm.replace);
       }
       await batch.commit(noResult: true);
     });
@@ -268,7 +267,7 @@ class DatabaseService {
       await txn.delete('entries');
       final batch = txn.batch();
       for (final e in entries) {
-        batch.insert('entries', e.toMap());
+        batch.insert('entries', e.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
       }
       batch.insert('profile', profile.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
       batch.insert('bean_profile', beanProfile.toMap(),
@@ -279,7 +278,7 @@ class DatabaseService {
       await txn.delete('freeze_dates');
       final freezeBatch = txn.batch();
       for (final d in freezeDates) {
-        freezeBatch.insert('freeze_dates', {'date': d.toIso8601String().substring(0, 10)});
+        freezeBatch.insert('freeze_dates', {'date': isoDate(d)});
       }
       await freezeBatch.commit(noResult: true);
     });

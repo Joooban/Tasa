@@ -40,6 +40,7 @@ class _EntryFormSheetState extends ConsumerState<EntryFormSheet> {
   final _methodOtherCtrl = TextEditingController();
   late DateTime _date;
   final _priceCtrl = TextEditingController();
+  String _initialPriceText = '';
   bool _free = false;
   DayPart? _timeOfDay;
   int _rating = 0;
@@ -70,6 +71,7 @@ class _EntryFormSheetState extends ConsumerState<EntryFormSheet> {
     }
     _date = e?.date ?? todayDate();
     _priceCtrl.text = e?.price != null ? e!.price!.round().toString() : '';
+    _initialPriceText = _priceCtrl.text;
     _free = e?.free ?? false;
     _timeOfDay = e?.timeOfDay;
     _rating = e?.rating ?? 0;
@@ -106,7 +108,14 @@ class _EntryFormSheetState extends ConsumerState<EntryFormSheet> {
     final method = _method == '__other'
         ? (_methodOtherCtrl.text.trim().isEmpty ? 'Other' : _methodOtherCtrl.text.trim())
         : _method;
-    final rawPrice = double.tryParse(_priceCtrl.text);
+    // If the price field still shows exactly what we pre-filled from the
+    // existing entry, reuse its precise stored value instead of the rounded
+    // display text — otherwise a price like ₱28.125 (auto-filled from the
+    // bean profile) silently truncates to ₱28 on every edit that doesn't
+    // touch the price field.
+    final priceFieldUntouched = isEditing && _priceCtrl.text == _initialPriceText;
+    final rawPrice =
+        priceFieldUntouched ? existing!.price : double.tryParse(_priceCtrl.text);
     final fallbackCpc = _kind == EntryKind.home
         ? ref.read(cupboardControllerProvider).valueOrNull?.beanProfile.costPerCup
         : null;
