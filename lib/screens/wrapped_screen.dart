@@ -10,6 +10,8 @@ import '../providers/services_providers.dart';
 import '../theme/app_colors.dart';
 import '../widgets/wrapped_card.dart';
 
+enum _WrappedPeriod { month, year }
+
 class WrappedScreen extends ConsumerStatefulWidget {
   const WrappedScreen({super.key});
 
@@ -20,6 +22,7 @@ class WrappedScreen extends ConsumerStatefulWidget {
 class _WrappedScreenState extends ConsumerState<WrappedScreen> {
   final _boundaryKey = GlobalKey();
   bool _sharing = false;
+  _WrappedPeriod _period = _WrappedPeriod.month;
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +33,31 @@ class _WrappedScreenState extends ConsumerState<WrappedScreen> {
     if (cupboard == null || stats == null || insights == null) {
       return const SizedBox.shrink();
     }
+    final isYear = _period == _WrappedPeriod.year;
 
     final recentBadges = unlockedBadges(stats).reversed.take(3).toList().reversed.toList();
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
       children: [
+        Center(
+          child: SegmentedButton<_WrappedPeriod>(
+            segments: const [
+              ButtonSegment(value: _WrappedPeriod.month, label: Text('Month')),
+              ButtonSegment(value: _WrappedPeriod.year, label: Text('Year')),
+            ],
+            selected: {_period},
+            onSelectionChanged: (s) => setState(() => _period = s.first),
+          ),
+        ),
+        const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(fmtMonthYear(DateTime.now()),
-                style: TextStyle(fontFamily: 'monospace', fontSize: 13, color: c.inkSoft)),
+            Text(
+              isYear ? DateTime.now().year.toString() : fmtMonthYear(DateTime.now()),
+              style: TextStyle(fontFamily: 'monospace', fontSize: 13, color: c.inkSoft),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -65,6 +82,7 @@ class _WrappedScreenState extends ConsumerState<WrappedScreen> {
               hideAmount: cupboard.settings.hideAmount,
               recentBadges: recentBadges,
               jokeSeed: cupboard.entries.length,
+              isYear: isYear,
             ),
           ),
         ),
@@ -173,10 +191,16 @@ class _WrappedScreenState extends ConsumerState<WrappedScreen> {
     setState(() => _sharing = true);
     final name = cupboard.profile.name.trim();
     final hide = cupboard.settings.hideAmount;
+    final isYear = _period == _WrappedPeriod.year;
+    final spend = isYear ? stats.yearSpend : stats.monthSpend;
+    final entryCount = isYear ? stats.yearEntryCount : stats.monthEntryCount;
+    final homeCount = isYear ? stats.yearHomeCount : stats.monthHomeCount;
+    final awayCount = isYear ? stats.yearAwayCount : stats.monthAwayCount;
+    final periodWord = isYear ? 'year' : 'month';
     final lines = [
-      name.isNotEmpty ? "$name's coffee month on Tasa ☕" : 'My coffee month on Tasa ☕',
-      hide ? 'Spend: kept private' : 'Spend: ${peso(stats.monthSpend)}',
-      'Cups: ${stats.monthEntryCount} (${stats.monthHomeCount} home, ${stats.monthAwayCount} away)',
+      name.isNotEmpty ? "$name's coffee $periodWord on Tasa ☕" : 'My coffee $periodWord on Tasa ☕',
+      hide ? 'Spend: kept private' : 'Spend: ${peso(spend)}',
+      'Cups: $entryCount ($homeCount home, $awayCount away)',
       if (stats.topCafe != null) 'Top café: ${stats.topCafe}',
       if (stats.topMethod != null) 'Go-to method: ${stats.topMethod}',
       'Longest streak: ${stats.bestStreak} days',

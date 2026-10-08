@@ -15,6 +15,7 @@ class WrappedCard extends StatelessWidget {
   final bool hideAmount;
   final List<BadgeDef> recentBadges;
   final int jokeSeed;
+  final bool isYear;
 
   const WrappedCard({
     super.key,
@@ -23,14 +24,21 @@ class WrappedCard extends StatelessWidget {
     required this.hideAmount,
     required this.recentBadges,
     required this.jokeSeed,
+    this.isYear = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final name = (profileName ?? '').trim();
-    final amountText = hideAmount ? '₱•••' : peso(stats.monthSpend);
-    final joke = hideAmount ? null : jokeFor(stats.monthSpend, jokeSeed);
+    final periodWord = isYear ? 'year' : 'month';
+    final spend = isYear ? stats.yearSpend : stats.monthSpend;
+    final savings = isYear ? stats.yearSavings : stats.monthSavings;
+    final entryCount = isYear ? stats.yearEntryCount : stats.monthEntryCount;
+    final homeCount = isYear ? stats.yearHomeCount : stats.monthHomeCount;
+    final awayCount = isYear ? stats.yearAwayCount : stats.monthAwayCount;
+    final amountText = hideAmount ? '₱•••' : peso(spend);
+    final joke = hideAmount ? null : jokeFor(spend, jokeSeed);
     final onEspresso = c.onEspresso;
     final cardRadius = BorderRadius.circular(22);
 
@@ -64,7 +72,7 @@ class WrappedCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            name.isNotEmpty ? "$name’s month in coffee" : 'Your month in coffee',
+            name.isNotEmpty ? "$name’s $periodWord in coffee" : 'Your $periodWord in coffee',
             style: TextStyle(
               color: onEspresso.withValues(alpha: 0.75),
               fontSize: 12,
@@ -87,10 +95,10 @@ class WrappedCard extends StatelessWidget {
             Text(joke, style: TextStyle(color: onEspresso.withValues(alpha: 0.8), fontSize: 13.5)),
           ],
           const SizedBox(height: 18),
-          _row('Cups this month', '${stats.monthEntryCount}', onEspresso),
-          _row('Home-brewed', '${stats.monthHomeCount}', onEspresso),
-          _row('Away', '${stats.monthAwayCount}', onEspresso),
-          _row('Est. saved brewing at home', hideAmount ? '₱•••' : peso(stats.monthSavings), onEspresso),
+          _row('Cups this $periodWord', '$entryCount', onEspresso),
+          _row('Home-brewed', '$homeCount', onEspresso),
+          _row('Away', '$awayCount', onEspresso),
+          _row('Est. saved brewing at home', hideAmount ? '₱•••' : peso(savings), onEspresso),
           _row('Top café', stats.topCafe ?? '—', onEspresso, mono: false),
           _row('Go-to method', stats.topMethod ?? '—', onEspresso, mono: false),
           _row('Longest streak', '${stats.bestStreak} days', onEspresso),

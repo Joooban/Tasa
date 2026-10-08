@@ -120,4 +120,18 @@ void main() {
     final stats = computeStats(entries: entries, beanProfile: const BeanProfile(), now: now);
     expect(stats.uniqueFlavorsCount, 3); // Fruity, Floral, Ube — Fruity not double-counted
   });
+
+  test('year totals only include entries from the current calendar year', () {
+    final entries = [
+      home(date: DateTime(2026, 1, 10), price: 50),
+      home(date: DateTime(2025, 12, 20), price: 999), // last year — excluded
+    ];
+    final stats = computeStats(
+      entries: entries,
+      beanProfile: const BeanProfile(),
+      now: DateTime(2026, 3, 15),
+    );
+    expect(stats.yearEntryCount, 1);
+    expect(stats.yearSpend, 50);
+  });
 }

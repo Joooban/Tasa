@@ -36,6 +36,15 @@ CoffeeStats computeStats({
   final monthAwaySpend = spendOf(monthAway);
   final monthSpend = monthHomeSpend + monthAwaySpend;
 
+  final thisYear = today.year;
+  bool inThisYear(Entry e) => e.date.year == thisYear;
+  final yearReal = real.where(inThisYear).toList();
+  final yearHome = yearReal.where((e) => e.kind == EntryKind.home).toList();
+  final yearAway = yearReal.where((e) => e.kind == EntryKind.away).toList();
+  final yearHomeSpend = spendOf(yearHome);
+  final yearAwaySpend = spendOf(yearAway);
+  final yearSpend = yearHomeSpend + yearAwaySpend;
+
   final awayPrices = real
       .where((e) => e.kind == EntryKind.away && !e.free && (e.price ?? 0) > 0)
       .map((e) => e.price!)
@@ -57,6 +66,7 @@ CoffeeStats computeStats({
   }
   final priceDelta = avgAway - avgHomeCost;
   final monthSavings = (priceDelta > 0 ? priceDelta : 0.0) * monthHome.length;
+  final yearSavings = (priceDelta > 0 ? priceDelta : 0.0) * yearHome.length;
 
   final cafeCounts = <String, int>{};
   for (final e in real) {
@@ -140,5 +150,12 @@ CoffeeStats computeStats({
     captionedCount: captionedCount,
     photographedCount: photographedCount,
     uniqueFlavorsCount: uniqueFlavorsCount,
+    yearSpend: yearSpend,
+    yearHomeSpend: yearHomeSpend,
+    yearAwaySpend: yearAwaySpend,
+    yearSavings: yearSavings,
+    yearEntryCount: yearReal.length,
+    yearHomeCount: yearHome.length,
+    yearAwayCount: yearAway.length,
   );
 }

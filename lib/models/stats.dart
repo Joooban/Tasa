@@ -28,6 +28,13 @@ class CoffeeStats {
   final int captionedCount;
   final int photographedCount;
   final int uniqueFlavorsCount;
+  final double yearSpend;
+  final double yearHomeSpend;
+  final double yearAwaySpend;
+  final double yearSavings;
+  final int yearEntryCount;
+  final int yearHomeCount;
+  final int yearAwayCount;
 
   const CoffeeStats({
     required this.totalCups,
@@ -58,6 +65,13 @@ class CoffeeStats {
     required this.captionedCount,
     required this.photographedCount,
     required this.uniqueFlavorsCount,
+    this.yearSpend = 0,
+    this.yearHomeSpend = 0,
+    this.yearAwaySpend = 0,
+    this.yearSavings = 0,
+    this.yearEntryCount = 0,
+    this.yearHomeCount = 0,
+    this.yearAwayCount = 0,
   });
 }
 
