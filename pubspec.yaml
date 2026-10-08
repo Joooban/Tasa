@@ -42,9 +42,9 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: false
-  image_path: "assets/icon_mark_flat.png"
+  image_path: "assets/icon_full_flat.png"
   adaptive_icon_background: "#EDE6D8"
-  adaptive_icon_foreground: "assets/icon_mark.png"
+  adaptive_icon_foreground: "assets/icon_full.png"
   min_sdk_android: 21
 
 flutter_native_splash:
