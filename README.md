@@ -10,7 +10,7 @@ app is translated from.
 
 ## Download
 
-📱 **[Download the latest APK](https://drive.google.com/file/d/1D3uMVikK2JpTeoXAQK70xWO87_xvxLnH/view?usp=sharing)** — sideload on Android (Settings →
+📱 **[Download the latest APK](https://drive.google.com/file/d/1BiZisS4gaaxBGrokdjwIKcbZVMHIRzOx/view?usp=sharing)** — sideload on Android (Settings →
 allow install from this source when prompted). No Play Store listing yet.
 
 ## Running it
