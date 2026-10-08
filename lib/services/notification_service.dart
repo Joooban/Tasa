@@ -59,12 +59,18 @@ class NotificationService {
     await _plugin.cancel(_reminderNotificationId);
   }
 
+  // `tz.local` is never set (no platform channel queries the device's IANA
+  // zone), so it defaults to UTC — scheduling via `tz.TZDateTime.now(tz.local)`
+  // would silently fire at the chosen clock time in UTC, not the device's
+  // actual local time. Building the instant from the device's own `DateTime`
+  // (which Dart always resolves in local time) and only using `tz.UTC` as a
+  // zone-math carrier avoids that without adding a timezone-lookup dependency.
   tz.TZDateTime _nextInstanceOf(int hour, int minute) {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduled = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-    if (scheduled.isBefore(now)) {
-      scheduled = scheduled.add(const Duration(days: 1));
+    final now = DateTime.now();
+    var scheduledLocal = DateTime(now.year, now.month, now.day, hour, minute);
+    if (scheduledLocal.isBefore(now)) {
+      scheduledLocal = scheduledLocal.add(const Duration(days: 1));
     }
-    return scheduled;
+    return tz.TZDateTime.from(scheduledLocal, tz.UTC);
   }
 }

@@ -19,8 +19,16 @@ class EntryCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final bool hideAmount;
 
-  const EntryCard({super.key, required this.entry, this.onTap, this.onEdit, this.onDelete});
+  const EntryCard({
+    super.key,
+    required this.entry,
+    this.onTap,
+    this.onEdit,
+    this.onDelete,
+    this.hideAmount = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +57,9 @@ class EntryCard extends StatelessWidget {
         : (entry.venueTag != null ? entry.venueTag!.label : 'Away');
     final title = isHome ? (entry.method ?? 'Home brew') : (entry.venueName ?? 'Away');
     final subtitle = isHome ? 'Home brew' : (entry.method ?? '');
-    final priceText = entry.free ? 'Free' : (entry.price != null ? peso(entry.price!) : '—');
+    final priceText = hideAmount
+        ? '₱•••'
+        : (entry.free ? 'Free' : (entry.price != null ? peso(entry.price!) : '—'));
     final hasPhoto = entry.photoPath != null;
 
     return Card(

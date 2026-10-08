@@ -29,3 +29,20 @@ Entry? usualEntry(List<Entry> entries) {
   }
   return best;
 }
+
+/// Builds today's "usual" entry from a past one — keeps the repeatable
+/// facts (kind, method/venue, price, flavors) but clears everything
+/// specific to the original moment (photo, caption, notes, rating, free),
+/// so logging "usual" doesn't resurface an old photo or a stale note.
+Entry repeatableUsualCopy(Entry usual, {required DateTime date}) {
+  return usual.copyWith(
+    id: Entry.newId(),
+    date: date,
+    isSample: false,
+    rating: 0,
+    free: false,
+    clearCaption: true,
+    clearNotes: true,
+    clearPhoto: true,
+  );
+}

@@ -53,8 +53,9 @@ class CupboardScreen extends ConsumerWidget {
                     _filterChip(context, ref, 'Away', CupboardFilter.away),
                   ],
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     OutlinedButton(
                       onPressed: () async {
@@ -67,7 +68,6 @@ class CupboardScreen extends ConsumerWidget {
                       ),
                       child: const Text('Repeat yesterday', style: TextStyle(fontSize: 12.5)),
                     ),
-                    const SizedBox(width: 8),
                     OutlinedButton(
                       onPressed: () async {
                         final msg = await ref.read(cupboardControllerProvider.notifier).skipToday();
@@ -78,7 +78,6 @@ class CupboardScreen extends ConsumerWidget {
                       ),
                       child: const Text('No coffee today', style: TextStyle(fontSize: 12.5)),
                     ),
-                    const SizedBox(width: 8),
                     OutlinedButton(
                       onPressed: () async {
                         final msg = await ref.read(cupboardControllerProvider.notifier).logUsual();

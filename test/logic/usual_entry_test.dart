@@ -53,4 +53,44 @@ void main() {
     ];
     expect(usualEntry(entries), isNull);
   });
+
+  group('repeatableUsualCopy', () {
+    final source = Entry(
+      id: 'old-id',
+      kind: EntryKind.home,
+      date: DateTime(2026, 1, 1),
+      method: 'Pour-over (V60)',
+      price: 28,
+      free: true,
+      rating: 5,
+      caption: 'first cup at the new place',
+      notes: 'tasted amazing',
+      photoPath: '/tmp/old-photo.jpg',
+      flavors: const ['Floral'],
+    );
+
+    test('gives the copy a new id, the target date, and clears isSample', () {
+      final copy = repeatableUsualCopy(source, date: DateTime(2026, 3, 15));
+      expect(copy.id, isNot('old-id'));
+      expect(copy.date, DateTime(2026, 3, 15));
+      expect(copy.isSample, isFalse);
+    });
+
+    test('clears the photo, caption, notes, rating, and free flag', () {
+      final copy = repeatableUsualCopy(source, date: DateTime(2026, 3, 15));
+      expect(copy.photoPath, isNull);
+      expect(copy.caption, isNull);
+      expect(copy.notes, isNull);
+      expect(copy.rating, 0);
+      expect(copy.free, isFalse);
+    });
+
+    test('keeps the kind, method, price, and flavors', () {
+      final copy = repeatableUsualCopy(source, date: DateTime(2026, 3, 15));
+      expect(copy.kind, EntryKind.home);
+      expect(copy.method, 'Pour-over (V60)');
+      expect(copy.price, 28);
+      expect(copy.flavors, const ['Floral']);
+    });
+  });
 }

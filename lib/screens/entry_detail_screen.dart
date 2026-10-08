@@ -29,7 +29,8 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final entries = ref.watch(cupboardControllerProvider).valueOrNull?.entries;
+    final cupboard = ref.watch(cupboardControllerProvider).valueOrNull;
+    final entries = cupboard?.entries;
     final entry = entries?.where((e) => e.id == widget.entryId).firstOrNull;
 
     // Deleted (including via this screen's own menu) while we're looking at it.
@@ -65,6 +66,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
           key: _boundaryKey,
           child: EntryCard(
             entry: entry,
+            hideAmount: cupboard?.settings.hideAmount ?? false,
             onEdit: () => showEntryForm(context, existing: entry),
             // No explicit pop here — deleting flips `entry` to null above on the
             // next rebuild, which already pops. A second pop call racing that

@@ -198,11 +198,7 @@ class CupboardController extends AsyncNotifier<CupboardState> {
     if (usual == null) {
       return 'Log a few more cups first, then your usual will show up here.';
     }
-    final copy = usual.copyWith(
-      id: Entry.newId(),
-      date: todayDate(),
-      isSample: false,
-    );
+    final copy = repeatableUsualCopy(usual, date: todayDate());
     await saveEntry(copy, isNew: true);
     final label = copy.kind == EntryKind.home ? copy.method : copy.venueName;
     return 'Logged your usual — ${label ?? 'cup'}.';
