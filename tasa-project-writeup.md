@@ -139,17 +139,3 @@ Written down deliberately, to prevent scope creep during development:
 - No iOS build or distribution.
 
 ---
-
-## 9. Roadmap
-
-**v1 — Android feedback build** (this document's scope)
-Flutter + Riverpod app with the full feature set in §2–§3, distributed as a signed APK via Google Drive link to a small group (friends, LinkedIn network) for real-world feedback. Success criterion: do people actually keep using it, and is the feedback positive enough to justify further investment.
-
-**v2 — contingent on v1 feedback**
-- App icon + splash screen
-- Home-screen widgets (native per-platform work — Android App Widgets + iOS WidgetKit; meaningfully more effort than everything else in this doc, which is why it's deliberately deferred rather than attempted in v1)
-- iOS build + TestFlight, pending Apple Developer enrollment
-- Google Play Store listing ($25 one-time)
-- Monetization (₱100 price point), if warranted by demand
-
-No fixed timeline is attached — the transition from v1 to v2 is a decision made *after* seeing real feedback, not a scheduled milestone.
